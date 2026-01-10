@@ -7,6 +7,35 @@ const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 /**
+ * Password Policy Validation
+ * Requirements: min 8 chars, uppercase, lowercase, number, special char
+ */
+function validatePassword(password) {
+  const errors = [];
+  
+  if (password.length < 8) {
+    errors.push("Password must be at least 8 characters long");
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Password must contain at least one uppercase letter");
+  }
+  if (!/[a-z]/.test(password)) {
+    errors.push("Password must contain at least one lowercase letter");
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push("Password must contain at least one number");
+  }
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push("Password must contain at least one special character");
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors: errors
+  };
+}
+
+/**
  * REGISTER USER
  * POST /api/auth/register
  */
@@ -19,31 +48,56 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Normalize email to lowercase and trim
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Check existing user
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
     // Password mismatch check
     if (password !== confirm_password) {
-    return res.status(400).json({ message: "Passwords do not match" });
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    // Password policy validation
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({ 
+        message: "Password does not meet requirements",
+        errors: passwordValidation.errors
+      });
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    await User.create({
+    // Create user (role defaults to "user" from schema)
+    const newUser = await User.create({
       f_name,
       l_name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       active: 1,
       created_date: new Date()
     });
 
-    return res.status(201).json({ message: "Registered successfully" });
+    // Generate JWT token with user id and role, 24-hour expiry
+    const token = jwt.sign(
+      { 
+        id: newUser._id,
+        role: newUser.role || "user"
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.status(201).json({ 
+      message: "Registered successfully",
+      token: token
+    });
 
   } catch (error) {
     console.error("Register error:", error);
@@ -64,8 +118,11 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Normalize email to lowercase and trim
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -76,17 +133,19 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // Active user
-    const activeUser = await User.findOne({ email, active: 1 });
-    if (!activeUser) {
+    // Active user check
+    if (user.active !== 1) {
       return res.status(400).json({ message: "Inactive user" });
     }
 
-    // Generate JWT
+    // Generate JWT with user id and role, 24-hour expiry
     const token = jwt.sign(
-      { id: user._id },
+      { 
+        id: user._id,
+        role: user.role || "user"
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     return res.json({ token });
