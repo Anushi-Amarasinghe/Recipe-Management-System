@@ -1,0 +1,98 @@
+<div class="edit-page">
+  <div class="edit-header">
+    <h2>Edit Recipe</h2>
+  </div>
+
+  <div class="edit-card">
+    <form class="edit-form" id="editRecipeForm">
+      <div class="form-row">
+        <div class="field">
+          <label for="title">Recipe Name</label>
+          <input id="title" type="text" placeholder="e.g. Caesar Salad" />
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category">
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Rating -->
+        <div class="field">
+          <label for="rating">Rating</label>
+          <select id="rating">
+            <option value="1">★☆☆☆☆ (1)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="5">★★★★★ (5)</option>
+          </select>
+          <div class="helper-text">Select a rating from 1 to 5 stars.</div>
+        </div>
+
+        <!-- Image upload -->
+        <div class="field">
+          <label for="recipeImage">Recipe Image</label>
+          <input id="recipeImage" type="file" accept="image/*" />
+          <div class="helper-text">Upload a JPG/PNG image for your recipe.</div>
+        </div>
+      </div>
+
+      <!-- Image preview -->
+      <div class="field" id="imagePreviewWrap" style="display:none;">
+        <label>Preview</label>
+        <div style="border:1px solid #E5E7EB; border-radius:12px; padding:12px;">
+          <img id="imagePreview" alt="Recipe preview" style="max-width:100%; height:auto; border-radius:10px;" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="desc">Description</label>
+        <textarea id="desc" placeholder="Write the recipe details..."></textarea>
+      </div>
+
+      <div class="inline-alert" id="editError"></div>
+
+      <div class="actions-bar">
+        <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Image preview (client-side)
+  const fileInput = document.getElementById("recipeImage");
+  const previewWrap = document.getElementById("imagePreviewWrap");
+  const previewImg = document.getElementById("imagePreview");
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) {
+      previewWrap.style.display = "none";
+      previewImg.src = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      previewWrap.style.display = "none";
+      previewImg.src = "";
+      alert("Please upload an image file (JPG/PNG).");
+      fileInput.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImg.src = e.target.result;
+      previewWrap.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+</script>

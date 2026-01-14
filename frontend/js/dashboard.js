@@ -4,21 +4,28 @@ const mainContent = document.getElementById("mainContent");
 async function loadPage(page, btnId) {
   try {
     const res = await fetch(`pages/${page}`);
+    if (!res.ok) throw new Error(`Failed to load pages/${page}`);
+
     const html = await res.text();
     mainContent.innerHTML = html;
 
-    // Active button styling
-    document.querySelectorAll(".sidebar button").forEach(b =>
-      b.classList.remove("active")
-    );
-    document.getElementById(btnId).classList.add("active");
+    // Active button styling (only if btnId provided)
+    if (btnId) {
+      document.querySelectorAll(".sidebar button").forEach(b =>
+        b.classList.remove("active")
+      );
+
+      const activeBtn = document.getElementById(btnId);
+      if (activeBtn) activeBtn.classList.add("active");
+    }
 
   } catch (err) {
+    console.error(err);
     mainContent.innerHTML = "<p>Error loading page</p>";
   }
 }
 
-// Button listeners
+// Sidebar button listeners
 document.getElementById("RecipesBtn")
   .addEventListener("click", () => loadPage("recipes.html", "RecipesBtn"));
 
@@ -33,6 +40,19 @@ document.getElementById("mealPlannerBtn")
 
 document.getElementById("settingsBtn")
   .addEventListener("click", () => loadPage("settings.html", "settingsBtn"));
+
+// Handle clicks inside dynamically loaded pages (Edit button)
+mainContent.addEventListener("click", (e) => {
+  const editBtn = e.target.closest(".edit-btn");
+  if (!editBtn) return;
+
+  // Optional: store the recipe id for the edit page to use
+  const recipeId = editBtn.dataset.id;
+  if (recipeId) localStorage.setItem("editingRecipeId", recipeId);
+
+  // Load the edit page into mainContent
+  loadPage("editrecipedetails.html", "myRecipesBtn");
+});
 
 // Load default page
 loadPage("recipes.html", "RecipesBtn");
