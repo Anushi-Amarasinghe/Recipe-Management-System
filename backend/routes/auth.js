@@ -189,4 +189,32 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @route   POST /api/auth/logout
+ * @desc    Logout user
+ * @access  Private (requires authentication)
+ */
+router.post("/logout", authMiddleware, async (req, res) => {
+  try {
+    // Log logout event (optional: could add to audit log)
+    console.log(`User ${req.userId} logged out`);
+    
+    // Note: JWT tokens are stateless, so we can't invalidate them server-side
+    // without implementing a token blacklist. The frontend will remove the token,
+    // making it effectively unusable. For production, consider implementing
+    // token blacklisting or refresh tokens for better security.
+    
+    return res.json({ 
+      message: "Logged out successfully" 
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+    // Even if there's an error, we should still return success
+    // since the token will be removed client-side
+    return res.json({ 
+      message: "Logged out successfully" 
+    });
+  }
+});
+
 module.exports = router;

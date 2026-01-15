@@ -34,5 +34,11 @@ document.getElementById("mealPlannerBtn")
 document.getElementById("settingsBtn")
   .addEventListener("click", () => loadPage("settings.html", "settingsBtn"));
 
+// Admin button (only visible to admins)
+const adminBtn = document.getElementById("adminBtn");
+if (adminBtn && typeof window.isAdmin === "function" && window.isAdmin()) {
+  adminBtn.addEventListener("click", () => loadPage("admin.html", "adminBtn"));
+}
+
 // Load default page
 loadPage("recipes.html", "RecipesBtn");
