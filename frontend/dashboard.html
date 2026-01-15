@@ -16,14 +16,16 @@
   <div class="logo">
     <img src="images/rms_logo.png" alt="RMS Logo" />
   </div>
-  <input type="search" placeholder="Search recipes..." />
-  <div class="username" id="usernameDisplay">User Name</div>
+
+  <input type="search" id="searchInput" placeholder="Search recipes..." />
+
+  <div class="username" id="usernameDisplay">Loading...</div>
 </header>
 
 <div class="container">
 
   <aside class="sidebar">
-    <button class="active" id="RecipesBtn">Recipes</button>
+    <button class="active" id="recipesBtn">Recipes</button>
     <button id="myRecipesBtn">My Recipes</button>
     <button id="favouritesBtn">Favourites</button>
     <button id="mealPlannerBtn">Meal Planner</button>
@@ -32,47 +34,17 @@
   </aside>
 
   <main class="content" id="mainContent">
-    <!-- content loads here -->
+    <h2>Welcome 👋</h2>
+    <p>Select an option from the sidebar.</p>
   </main>
-
 
 </div>
 
-<!-- Include the global script -->
+<!-- Auth check (protects page) -->
 <script src="js/authCheck.js"></script>
+
+<!-- Dashboard logic -->
 <script src="js/dashboard.js"></script>
-
-<script>
-  // Update greeting
-  const usernameDisplay = document.getElementById("usernameDisplay");
-
-  // When loadUser() in authCheck.js resolves
-  async function showUsername() {
-    try {
-      const res = await fetch("/api/auth/me", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
-      });
-
-      if (!res.ok) throw new Error("Not authorized");
-
-      const user = await res.json();
-      usernameDisplay.textContent = user.f_name + " " + user.l_name;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  showUsername();
-
-  // Sidebar button active class
-  const sidebarButtons = document.querySelectorAll(".sidebar button:not(.logout)");
-  sidebarButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      sidebarButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  });
-</script>
 
 </body>
 </html>
