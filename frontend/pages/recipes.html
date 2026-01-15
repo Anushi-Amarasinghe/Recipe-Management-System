@@ -1,7 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recipes</title>
+
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
 <div class="top-bar">
   <h2>Recipes</h2>
 </div>
 
-<div class="recipes-grid">
-  <p>All recipes will appear here...</p>
+<div class="recipes-grid" id="allRecipesGrid">
+
+  <!-- Placeholder recipe -->
+  <div class="recipe-card">
+    <div class="image-placeholder">[IMAGE]</div>
+
+    <div class="content">
+      <div class="title">Recipe Name</div>
+      <div class="rating">Rating: ★★★★☆</div>
+    </div>
+  </div>
+
 </div>
+
+<!-- Empty state -->
+<p id="noRecipesMsg" style="display:none; margin-top:20px;">
+  No recipes available.
+</p>
+
+<script>
+  // Placeholder for future API integration
+  const recipesGrid = document.getElementById("allRecipesGrid");
+
+  if (!recipesGrid.children.length) {
+    document.getElementById("noRecipesMsg").style.display = "block";
+  }
+</script>
+
+</body>
+</html>

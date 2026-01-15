@@ -1,41 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Recipes</title>
+
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
 <div class="top-bar">
-    <h2>My Recipes</h2>
-    <button class="add-recipe" id="addRecipeBtn">+ Add New Recipe</button>
+  <h2>My Recipes</h2>
+  <button class="add-recipe" id="addRecipeBtn">+ Add New Recipe</button>
 </div>
 
 <div class="recipes-grid" id="recipesGrid">
-    <!-- Recipe cards -->
-    <div class="recipe-card">
+
+  <!-- Recipe Card -->
+  <div class="recipe-card" data-id="1">
     <div class="image-placeholder">[IMAGE]</div>
+
     <div class="content">
-        <div class="title">My Recipe 1</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
+      <div class="title">My Recipe 1</div>
+      <div class="rating">Rating: ★★★★☆</div>
+
+      <div class="actions">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
     </div>
-    </div>
-    <div class="recipe-card">
+  </div>
+
+  <div class="recipe-card" data-id="2">
     <div class="image-placeholder">[IMAGE]</div>
+
     <div class="content">
-        <div class="title">My Recipe 2</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
+      <div class="title">My Recipe 2</div>
+      <div class="rating">Rating: ★★★☆☆</div>
+
+      <div class="actions">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
     </div>
-    </div>
-    <div class="recipe-card">
+  </div>
+
+  <div class="recipe-card" data-id="3">
     <div class="image-placeholder">[IMAGE]</div>
+
     <div class="content">
-        <div class="title">My Recipe 3</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
+      <div class="title">My Recipe 3</div>
+      <div class="rating">Rating: ★★★★★</div>
+
+      <div class="actions">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
     </div>
-    </div>
+  </div>
+
 </div>
+
+<!-- Empty state (hidden by default) -->
+<p id="noRecipesMsg" style="display:none; margin-top:20px;">
+  You haven’t added any recipes yet.
+</p>
+
+<script>
+  // Add recipe button (placeholder)
+  document.getElementById("addRecipeBtn").addEventListener("click", () => {
+    alert("Redirect to Add Recipe page");
+  });
+
+  // Edit / Delete actions
+  document.querySelectorAll(".recipe-card").forEach(card => {
+    const recipeId = card.dataset.id;
+
+    card.querySelector(".edit-btn").addEventListener("click", () => {
+      alert("Edit recipe ID: " + recipeId);
+    });
+
+    card.querySelector(".delete-btn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to delete this recipe?")) {
+        card.remove();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

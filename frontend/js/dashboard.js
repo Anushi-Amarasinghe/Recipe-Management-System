@@ -1,38 +1,97 @@
+// dashboard.js
+
+const token = localStorage.getItem("token");
 const mainContent = document.getElementById("mainContent");
+const usernameDisplay = document.getElementById("usernameDisplay");
 
-// Load page function
-async function loadPage(page, btnId) {
+/* =========================
+   Load Logged-in User
+========================= */
+async function loadUserInfo() {
   try {
-    const res = await fetch(`pages/${page}`);
-    const html = await res.text();
-    mainContent.innerHTML = html;
+    const res = await fetch("/api/auth/me", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
 
-    // Active button styling
-    document.querySelectorAll(".sidebar button").forEach(b =>
-      b.classList.remove("active")
-    );
-    document.getElementById(btnId).classList.add("active");
+    if (!res.ok) throw new Error("Unauthorized");
 
+    const user = await res.json();
+    usernameDisplay.textContent = `${user.f_name} ${user.l_name}`;
   } catch (err) {
-    mainContent.innerHTML = "<p>Error loading page</p>";
+    console.error(err);
   }
 }
 
-// Button listeners
-document.getElementById("RecipesBtn")
-  .addEventListener("click", () => loadPage("recipes.html", "RecipesBtn"));
+/* =========================
+   Page Content Loaders
+========================= */
+function loadRecipes() {
+  mainContent.innerHTML = `
+    <h2>All Recipes</h2>
+    <p>Browse all available recipes.</p>
+  `;
+}
 
-document.getElementById("myRecipesBtn")
-  .addEventListener("click", () => loadPage("my-recipes.html", "myRecipesBtn"));
+function loadMyRecipes() {
+  mainContent.innerHTML = `
+    <h2>My Recipes</h2>
+    <p>Here are the recipes you created.</p>
+  `;
+}
 
-document.getElementById("favouritesBtn")
-  .addEventListener("click", () => loadPage("favourites.html", "favouritesBtn"));
+function loadFavourites() {
+  mainContent.innerHTML = `
+    <h2>Favourites</h2>
+    <p>Your favourite recipes will appear here.</p>
+  `;
+}
 
-document.getElementById("mealPlannerBtn")
-  .addEventListener("click", () => loadPage("meal-planner.html", "mealPlannerBtn"));
+function loadMealPlanner() {
+  mainContent.innerHTML = `
+    <h2>Meal Planner</h2>
+    <p>Plan your meals for the week.</p>
+  `;
+}
 
-document.getElementById("settingsBtn")
-  .addEventListener("click", () => loadPage("settings.html", "settingsBtn"));
+function loadSettings() {
+  mainContent.innerHTML = `
+    <h2>Settings</h2>
+    <p>Manage your account settings.</p>
+  `;
+}
 
-// Load default page
-loadPage("recipes.html", "RecipesBtn");
+/* =========================
+   Sidebar Navigation
+========================= */
+document.getElementById("recipesBtn").addEventListener("click", loadRecipes);
+document.getElementById("myRecipesBtn").addEventListener("click", loadMyRecipes);
+document.getElementById("favouritesBtn").addEventListener("click", loadFavourites);
+document.getElementById("mealPlannerBtn").addEventListener("click", loadMealPlanner);
+document.getElementById("settingsBtn").addEventListener("click", loadSettings);
+
+/* =========================
+   Sidebar Active Button
+========================= */
+const sidebarButtons = document.querySelectorAll(".sidebar button:not(.logout)");
+
+sidebarButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    sidebarButtons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+  });
+});
+
+/* =========================
+   Search (UI only for now)
+========================= */
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  console.log("Searching for:", e.target.value);
+});
+
+/* =========================
+   Init
+========================= */
+loadUserInfo();
+loadRecipes(); // default view
