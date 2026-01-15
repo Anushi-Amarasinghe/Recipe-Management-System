@@ -24,7 +24,7 @@ const recipeSchema = new mongoose.Schema(
       required: [true, "Instructions are required"],
     },
 
-    //  link to authenticated user
+    // Link to authenticated user
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -44,5 +44,14 @@ const recipeSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+/**
+ * TEXT INDEX
+ * Enables searching by title and ingredients
+ */
+recipeSchema.index({
+  title: "text",
+  ingredients: "text",
+});
 
 module.exports = mongoose.model("Recipe", recipeSchema);
