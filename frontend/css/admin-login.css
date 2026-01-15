@@ -1,0 +1,163 @@
+/* admin-login.css - Admin-specific styling for login page */
+
+/* Override default login styles with admin theme */
+.admin-login-wrapper {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  width: 380px;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-login-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.admin-login-card {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-header h2 {
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.admin-header .subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+.admin-input-group {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.admin-input-group:focus-within {
+  border-color: #FFD700;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.admin-input-group .icon {
+  color: #1e3c72;
+  font-size: 1.25rem;
+}
+
+.admin-input-group input[type="email"],
+.admin-input-group input[type="password"] {
+  color: #1e3c72;
+  font-weight: 500;
+}
+
+.admin-input-group input[type="email"]::placeholder,
+.admin-input-group input[type="password"]::placeholder {
+  color: #7a8ba3;
+}
+
+.admin-login-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #1e3c72;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-login-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.admin-login-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+}
+
+.admin-login-wrapper .error-message {
+  color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.1);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  font-weight: 600;
+}
+
+.admin-login-wrapper .remember-me {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-login-wrapper .remember-me input[type="checkbox"] {
+  accent-color: #FFD700;
+}
+
+.admin-login-wrapper .register-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-login-wrapper .register-text a {
+  color: #FFD700;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.admin-login-wrapper .register-text a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+/* Responsive design for mobile */
+@media (max-width: 480px) {
+  .admin-login-wrapper {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .admin-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Security badge indicator */
+.admin-login-card::after {
+  content: '🛡️ Secure Admin Access';
+  display: block;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  margin-top: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+

@@ -23,18 +23,18 @@ app.get("/", (req, res) => {
 
 // API routes
 app.use("/api/auth", authRoutes);
-//app.use("/api/recipes", recipeRoutes);
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
+
+// Recipe routes (protected)
+const recipeRoutes = require("./routes/Recipe");
+app.use("/api/recipes", recipeRoutes);
 
 // Handle 404 for unknown routes  
 app.use((req, res) => {
   console.log(req, res)
   res.status(404).send('Page Not Found');
 });
-
-// API ROUTES FOR RECIPES
-const recipeRoutes = require("./routes/recipe");
-
-app.use("/recipes", recipeRoutes);
 
 module.exports = app;
 

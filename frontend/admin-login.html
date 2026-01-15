@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recipe Management System | Login</title>
+  <title>Admin Login | Recipe Management System</title>
 
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin-login.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -13,29 +14,31 @@
 
 <body>
 
-  <div class="login-wrapper">
-    <div class="login-card">
-
-      <h2>Welcome Back 👋</h2>
-      <p class="subtitle">Sign in to manage your recipes</p>
+  <div class="admin-login-wrapper">
+    <div class="admin-login-card">
+      
+      <div class="admin-header">
+        <h2>🔐 Admin Access</h2>
+        <p class="subtitle">Sign in to manage the system</p>
+      </div>
 
       <!-- Error message -->
       <div class="error-message" id="error"></div>
 
-      <form id="loginForm">
+      <form id="adminLoginForm">
 
-        <div class="input-group">
+        <div class="input-group admin-input-group">
           <span class="icon">📧</span>
           <input
             type="email"
             id="email"
-            placeholder="Email Address"
+            placeholder="Admin Email Address"
             required
             autocomplete="email"
           />
         </div>
 
-        <div class="input-group">
+        <div class="input-group admin-input-group">
           <span class="icon">🔒</span>
           <input
             type="password"
@@ -53,30 +56,32 @@
           </label>
         </div>
 
-
-        <button type="submit" class="login-btn" id="loginBtn">
-          <span id="loginBtnText">Login</span>
+        <button type="submit" class="login-btn admin-login-btn" id="loginBtn">
+          <span id="loginBtnText">Admin Login</span>
           <span id="loginBtnSpinner" style="display: none;">⏳</span>
         </button>
 
       </form>
 
       <p class="register-text">
-        New here? <a href="register.html">Create an account</a>
+        Regular user? <a href="login.html">User Login</a>
       </p>
 
     </div>
   </div>
 
+  <!-- Load tokenStorage utility -->
+  <script src="js/tokenStorage.js"></script>
+  
   <script>
-  const form = document.getElementById('loginForm');
+  const form = document.getElementById('adminLoginForm');
   const errorDiv = document.getElementById('error');
   const emailInput = document.getElementById('email');
   const rememberCheckbox = document.getElementById('rememberEmail');
 
-  // Load remembered email on page load
+  // Load remembered email on page load (use separate key for admin)
   window.addEventListener('DOMContentLoaded', () => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedEmail = localStorage.getItem('adminRememberedEmail');
     if (savedEmail) {
       emailInput.value = savedEmail;
       rememberCheckbox.checked = true;
@@ -132,7 +137,8 @@
     setLoadingState(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      // Call admin login endpoint (will be created in backend)
+      const res = await fetch('/api/auth/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -142,8 +148,18 @@
 
       if (!res.ok) {
         // Handle standardized error format
-        const errorMessage = data.error?.message || data.message || 'Login failed';
+        const errorMessage = data.error?.message || data.message || 'Admin login failed';
         errorDiv.textContent = errorMessage;
+        errorDiv.style.display = 'block';
+        setLoadingState(false);
+        return;
+      }
+
+      // Verify admin role from token
+      const tokenPayload = window.tokenStorage?.decodeToken(data.token);
+      
+      if (!tokenPayload || tokenPayload.role !== 'admin') {
+        errorDiv.textContent = 'Access denied: Admin privileges required';
         errorDiv.style.display = 'block';
         setLoadingState(false);
         return;
@@ -153,11 +169,11 @@
       loginBtnText.textContent = '✓ Success!';
       loginBtn.style.backgroundColor = '#4CAF50';
       
-      // Remember email logic
+      // Remember email logic (separate key for admin)
       if (rememberCheckbox.checked) {
-        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem('adminRememberedEmail', email);
       } else {
-        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('adminRememberedEmail');
       }
 
       // Save JWT token securely (24h expiry)
@@ -168,7 +184,7 @@
         localStorage.setItem('token', data.token);
       }
 
-      // Redirect after brief delay to show success state
+      // Redirect to dashboard (admin panel will be accessible if user is admin)
       setTimeout(() => {
         window.location.href = 'dashboard.html';
       }, 500);
@@ -180,8 +196,8 @@
       setLoadingState(false);
     }
   });
-</script>
-
+  </script>
 
 </body>
 </html>
+

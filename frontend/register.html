@@ -11,6 +11,7 @@
 </head>
 
 <body>
+  <script src="js/tokenStorage.js"></script>
 
 <div class="login-wrapper">
   <div class="login-card">
@@ -265,9 +266,14 @@
         return;
       }
 
-      // Auto-login: Save token and redirect to dashboard
+      // Auto-login: Save token securely and redirect to dashboard
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        if (window.tokenStorage && window.tokenStorage.setToken) {
+          window.tokenStorage.setToken(data.token, 24);
+        } else {
+          // Fallback to direct localStorage if utility not loaded
+          localStorage.setItem('token', data.token);
+        }
         window.location.href = 'dashboard.html';
       } else {
         // Fallback if token not received

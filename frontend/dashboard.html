@@ -28,6 +28,7 @@
     <button id="favouritesBtn">Favourites</button>
     <button id="mealPlannerBtn">Meal Planner</button>
     <button id="settingsBtn">Settings</button>
+    <button id="adminBtn" class="admin-only" style="display: none;">👑 Admin Panel</button>
     <button class="logout" id="logoutBtn">Logout</button>
   </aside>
 
@@ -39,6 +40,10 @@
 </div>
 
 <!-- Include the global script -->
+<script src="js/tokenStorage.js"></script>
+<script src="js/routeGuard.js"></script>
+<script src="js/roleUtils.js"></script>
+<script src="js/logout.js"></script>
 <script src="js/authCheck.js"></script>
 <script src="js/dashboard.js"></script>
 
@@ -49,8 +54,16 @@
   // When loadUser() in authCheck.js resolves
   async function showUsername() {
     try {
+      // Get token using centralized utility
+      let token = null;
+      if (window.tokenStorage && window.tokenStorage.getToken) {
+        token = window.tokenStorage.getToken();
+      } else {
+        token = localStorage.getItem("token");
+      }
+      
       const res = await fetch("/api/auth/me", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        headers: { "Authorization": "Bearer " + token }
       });
 
       if (!res.ok) throw new Error("Not authorized");
@@ -63,6 +76,19 @@
   }
 
   showUsername();
+
+  // Role-based UI: Show admin button only for admins
+  if (typeof window.isAdmin === "function" && window.isAdmin()) {
+    const adminBtn = document.getElementById("adminBtn");
+    if (adminBtn) {
+      adminBtn.style.display = "";
+    }
+    
+    // Add admin badge to username
+    if (typeof addAdminBadge === "function") {
+      addAdminBadge(usernameDisplay);
+    }
+  }
 
   // Sidebar button active class
   const sidebarButtons = document.querySelectorAll(".sidebar button:not(.logout)");
