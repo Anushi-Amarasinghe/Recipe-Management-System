@@ -1,0 +1,75 @@
+<!-- add-recipe.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add New Recipe</title>
+  <link rel="stylesheet" href="/css/add-recipe.css" />
+</head>
+
+<body>
+  <main class="page">
+    <section class="panel">
+      <h1 class="panel-title">Add New Recipe</h1>
+      <div class="rule" aria-hidden="true"></div>
+
+      <form class="form" id="addRecipeForm">
+        <!-- Recipe Title -->
+        <div class="field">
+          <label for="title">Recipe Title</label>
+          <input id="title" name="title" type="text" placeholder="Enter recipe title..." required />
+        </div>
+
+        <!-- Description -->
+        <div class="field">
+          <label for="desc">Description</label>
+          <textarea id="desc" name="desc" placeholder="Enter recipe description..." required></textarea>
+        </div>
+
+        <!-- Recipe Image -->
+        <div class="field">
+          <label for="recipeImage">Recipe Image</label>
+
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-center">
+              <div class="upload-text">[IMAGE UPLOAD AREA]</div>
+
+              <!-- IMPORTANT: name="image" must match upload.single("image") -->
+              <input class="file-input" id="recipeImage" name="image" type="file" accept="image/*" />
+              <button class="choose-btn" type="button" id="chooseFileBtn">Choose File</button>
+            </div>
+          </div>
+
+          <div class="preview" id="imagePreviewWrap" style="display:none;">
+            <img id="imagePreview" alt="Recipe preview" />
+          </div>
+        </div>
+
+        <!-- Ingredients header -->
+        <div class="ingredients-head">
+          <label class="ingredients-label">Ingredients</label>
+          <button class="square-btn" type="button" id="addIngredientBtn" aria-label="Add ingredient">+</button>
+        </div>
+
+        <!-- Ingredients list -->
+        <div class="ingredients-list" id="ingredientsList">
+          <div class="ingredient-row">
+            <input name="ingredients[]" type="text" placeholder="Ingredient 1" />
+            <button class="square-btn" type="button" aria-label="Remove ingredient">−</button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="btn" type="button" id="cancelBtn">Cancel</button>
+          <button class="btn btn-dark" type="submit">Save Recipe</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Load JS once, after the DOM -->
+  <script src="/js/add-recipe.js"></script>
+</body>
+</html>

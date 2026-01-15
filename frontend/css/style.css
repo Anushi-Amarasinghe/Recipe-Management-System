@@ -278,3 +278,121 @@ input[type="password"] {
 .inline-alert.show {
   display: block;
 }
+
+
+
+/* =========================
+   Recipe Details (Edit) UI
+   Matches wireframe layout
+========================= */
+
+.recipe-details-page{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 16px 40px;
+  color: #111827;
+}
+
+.rd-header{
+  margin-bottom: 14px;
+}
+
+.rd-title{
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.rd-divider{
+  border: 0;
+  border-top: 2px solid #111827;
+  margin: 0;
+  opacity: 1;
+}
+
+.rd-image-section{
+  margin-top: 14px;
+}
+
+.rd-image-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 260px;
+  border: 2px solid #111827;
+  background: #D1D5DB; /* grey block like mock */
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+.rd-image-placeholder{
+  color: #6B7280;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.rd-image-preview{
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rd-file-input{
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+}
+
+.rd-actions{
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.rd-btn{
+  border: 2px solid #111827;
+  background: #FFFFFF;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 170px;
+}
+
+.rd-btn:hover{
+  background: #F3F4F6;
+}
+
+.rd-btn-primary{
+  background: #111827;
+  color: #FFFFFF;
+}
+
+.rd-btn-primary:hover{
+  background: #0B1220;
+}
+
+.rd-btn-small{
+  min-width: auto;
+  padding: 10px 16px;
+}
+
+.rd-section{
+  margin-top: 18px;
+}
+
+.rd-section-title{
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.rd-ingredients-box{
+  border: 2px solid #111827;
+  padding: 14px 14px 12px;
+  margin-top: 12
+}

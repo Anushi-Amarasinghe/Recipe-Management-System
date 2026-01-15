@@ -1,32 +1,63 @@
 // authCheck.js
 
+function redirectToLogin() {
+  window.location.href = "login.html";
+}
+
 // Get token from localStorage
 const token = localStorage.getItem("token");
 
+// If no token, redirect and stop
 if (!token) {
-  // Not logged in, redirect to login page
-  window.location.href = "login.html";
+  redirectToLogin();
+  throw new Error("No token found");
 }
 
 async function loadUser() {
   try {
     const res = await fetch("/api/auth/me", {
-      headers: { "Authorization": "Bearer " + token }
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (!res.ok) throw new Error("Not authorized");
+    if (!res.ok) {
+      // Try to read the error message (if server sends JSON)
+      let msg = `Request failed with status ${res.status}`;
+      try {
+        const errBody = await res.json();
+        if (errBody?.message) msg = errBody.message;
+      } catch (_) {
+        // ignore if not JSON
+      }
+
+      console.error("Auth check failed:", res.status, msg);
+
+      // Only clear token on auth failures
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem("token");
+        redirectToLogin();
+        return;
+      }
+
+      // For 500 etc, don't destroy token—surface the issue
+      throw new Error(msg);
+    }
 
     const data = await res.json();
 
-    // If there’s a greeting element, show username
     const greetingEl = document.getElementById("greeting");
     if (greetingEl) greetingEl.textContent = `Hello, ${data.f_name}!`;
 
-    return data; // return user data if needed
+    return data;
   } catch (err) {
-    console.error(err);
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
+    console.error("loadUser error:", err);
+
+    // If this is a network error (server down), you might not want to logout.
+    // If you DO want to force logout on any error, uncomment next two lines:
+    // localStorage.removeItem("token");
+    // redirectToLogin();
   }
 }
 
@@ -35,7 +66,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
-    window.location.href = "login.html";
+    redirectToLogin();
   });
 }
 

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>View Recipe</title>
+  <link rel="stylesheet" href="/css/view-recipe.css" />
+</head>
+
+<body>
+  <main class="page">
+    <section class="panel">
+      <div class="panel-head">
+        <h1 class="panel-title" id="title">View Recipe</h1>
+        <div class="head-actions">
+          <a class="btn" href="/pages/my-recipes.html">Back</a>
+          <a class="btn btn-dark" id="editBtn" href="#">Edit</a>
+        </div>
+      </div>
+
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="block">
+        <div class="label">Description</div>
+        <div class="box" id="desc">—</div>
+      </div>
+
+      <div class="block">
+        <div class="label">Recipe Image</div>
+        <div class="image-area">
+          <div class="image-placeholder" id="imgPlaceholder">[NO IMAGE]</div>
+          <img class="image" id="img" alt="Recipe image" style="display:none;" />
+        </div>
+      </div>
+
+      <div class="ingredients-head">
+        <div class="ingredients-label">Ingredients</div>
+      </div>
+
+      <div class="ingredients-list" id="ingredientsList"></div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="deleteBtn">Delete</button>
+        <button class="btn btn-dark" type="button" id="closeBtn">Close</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ---------- Storage helpers ----------
+    const STORAGE_KEY = "recipes";
+
+    function getAllRecipes() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function saveAllRecipes(recipes) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
+    }
+
+    function getRecipeById(id) {
+      return getAllRecipes().find(r => String(r.id) === String(id));
+    }
+
+    // ---------- Page helpers ----------
+    function qp(key) {
+      return new URL(window.location.href).searchParams.get(key);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function render(recipe) {
+      document.getElementById("title").textContent = recipe.title || "View Recipe";
+      document.getElementById("desc").textContent = recipe.desc || "—";
+
+      const img = document.getElementById("img");
+      const ph = document.getElementById("imgPlaceholder");
+      if (recipe.imageDataUrl) {
+        img.src = recipe.imageDataUrl;
+        img.style.display = "block";
+        ph.style.display = "none";
+      } else {
+        img.style.display = "none";
+        ph.style.display = "grid";
+      }
+
+      const list = document.getElementById("ingredientsList");
+      list.innerHTML = "";
+      const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+
+      if (!ingredients.length) {
+        list.innerHTML = `<div class="empty">No ingredients added.</div>`;
+      } else {
+        ingredients.forEach((ing, i) => {
+          const row = document.createElement("div");
+          row.className = "ingredient-view";
+          row.innerHTML = `
+            <div class="pill">
+              <span class="pill-num">${i + 1}</span>
+              <span class="pill-text">${escapeHtml(ing)}</span>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+      }
+    }
+
+    // ---------- Init ----------
+    const id = qp("id");
+    const recipe = id ? getRecipeById(id) : null;
+
+    if (!recipe) {
+      alert("Recipe not found.");
+      window.location.href = "/pages/my-recipes.html";
+    } else {
+      render(recipe);
+
+      // Edit route
+      document.getElementById("editBtn").href =
+        `/pages/edit-recipe.html?id=${encodeURIComponent(recipe.id)}`;
+
+      // Delete
+      document.getElementById("deleteBtn").addEventListener("click", () => {
+        const ok = confirm("Delete this recipe?");
+        if (!ok) return;
+
+        const recipes = getAllRecipes().filter(r => String(r.id) !== String(recipe.id));
+        saveAllRecipes(recipes);
+
+        window.location.href = "/pages/my-recipes.html";
+      });
+
+      // Close/back
+      document.getElementById("closeBtn").addEventListener("click", () => {
+        window.history.back();
+      });
+    }
+  </script>
+</body>
+</html>
