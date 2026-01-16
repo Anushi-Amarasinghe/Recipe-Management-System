@@ -182,6 +182,71 @@ router.post("/login", authLimiter, validateLogin, async (req, res) => {
   }
 });
 
+/**
+ * @route   POST /api/auth/admin/login
+ * @desc    Admin login - verifies admin role before issuing token
+ */
+router.post("/admin/login", authLimiter, validateLogin, async (req, res) => {
+  try {
+    // Check payload size (10kb limit)
+    const contentLength = req.get("content-length");
+    if (contentLength && parseInt(contentLength) > 10 * 1024) {
+      return sendError(res, 413, ErrorCodes.PAYLOAD_TOO_LARGE, 
+        "Request payload too large", 
+        "Maximum 10kb allowed for login");
+    }
+
+    const { email, password } = req.body;
+
+    // Email is already normalized by express-validator
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Find user
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return sendError(res, 401, ErrorCodes.AUTH_ERROR, 
+        "Invalid email or password");
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return sendError(res, 401, ErrorCodes.AUTH_ERROR, 
+        "Invalid email or password");
+    }
+
+    // Active user check
+    if (user.active !== 1) {
+      return sendError(res, 403, ErrorCodes.FORBIDDEN, 
+        "Account is inactive");
+    }
+
+    // Verify admin role before issuing token (US4-T.6)
+    if (user.role !== "admin") {
+      return sendError(res, 403, ErrorCodes.FORBIDDEN, 
+        "Admin access required");
+    }
+
+    // Generate JWT with user id and role, 24-hour expiry
+    const token = jwt.sign(
+      { 
+        id: user._id,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.json({ token });
+
+  } catch (error) {
+    console.error("Admin login error:", error);
+    return sendError(res, 500, ErrorCodes.SERVER_ERROR, 
+      "Server error", 
+      process.env.NODE_ENV === "development" ? error.message : undefined);
+  }
+});
+
 // Get current logged-in user
 router.get("/me", authMiddleware, async (req, res) => {
   try {
