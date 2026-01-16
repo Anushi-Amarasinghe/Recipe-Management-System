@@ -4,6 +4,7 @@ const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
+const adminUserRoutes = require("./routes/adminUserRoutes");
 //const recipeRoutes = require("./routes/recipes");
 
 const app = express();
@@ -20,6 +21,8 @@ app.use(express.static(path.join(__dirname, "../frontend")));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
+
+app.use("/api/admin/users", adminUserRoutes);
 
 // API routes
 app.use("/api/auth", authRoutes);
