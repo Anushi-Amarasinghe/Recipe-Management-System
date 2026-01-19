@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
+const { userOrAdmin, adminOnly } = require("../middleware/roleMiddleware");
 const authLimiter = require("../middleware/rateLimiter");
 const { validateRegister, validateLogin } = require("../middleware/validation");
 const { sendError, ErrorCodes } = require("../utils/errorHandler");
@@ -295,6 +296,56 @@ router.get("/me", authMiddleware, async (req, res) => {
     return sendError(res, 500, ErrorCodes.SERVER_ERROR, 
       "Server error", 
       process.env.NODE_ENV === "development" ? err.message : undefined);
+  }
+});
+
+/**
+ * @route   GET /api/auth/admin/me
+ * @desc    Get current admin user info
+ * @access  Private - Admin only (US4-T.9: Admin route protection middleware)
+ */
+router.get("/admin/me", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return sendError(res, 404, ErrorCodes.NOT_FOUND, "User not found");
+    }
+    // Double-check role (defense in depth)
+    if (user.role !== "admin") {
+      return sendError(res, 403, ErrorCodes.FORBIDDEN, 
+        "Admin access required");
+    }
+    res.json(user);
+  } catch (err) {
+    console.error("Get admin user error:", err);
+    return sendError(res, 500, ErrorCodes.SERVER_ERROR, 
+      "Server error", 
+      process.env.NODE_ENV === "development" ? err.message : undefined);
+  }
+});
+
+/**
+ * @route   POST /api/auth/logout
+ * @desc    Logout user
+ * @access  Private - requires valid user or admin role
+ */
+router.post("/logout", authMiddleware, userOrAdmin, async (req, res) => {
+  try {
+    // Log logout event (optional - for auditing)
+    console.log(`User ${req.userId} (role: ${req.userRole}) logged out`);
+    
+    // Note: With stateless JWT, we can't invalidate the token server-side
+    // without implementing a token blacklist. The client should remove
+    // the token from localStorage after receiving this response.
+    
+    return res.json({ 
+      message: "Logged out successfully" 
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return sendError(res, 500, ErrorCodes.SERVER_ERROR, 
+      "Server error", 
+      process.env.NODE_ENV === "development" ? error.message : undefined);
   }
 });
 

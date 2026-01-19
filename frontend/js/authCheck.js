@@ -61,13 +61,34 @@ async function loadUser() {
   }
 }
 
+// Logout function - calls backend and clears local storage
+async function logout() {
+  const token = localStorage.getItem("token");
+  
+  // Call backend logout endpoint if token exists
+  if (token) {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (err) {
+      // Even if backend call fails, proceed with client-side logout
+      console.error("Logout API call failed:", err);
+    }
+  }
+  
+  // Clear token from localStorage
+  localStorage.removeItem("token");
+  redirectToLogin();
+}
+
 // Logout button handling (if present)
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    redirectToLogin();
-  });
+  logoutBtn.addEventListener("click", logout);
 }
 
 // Run immediately
