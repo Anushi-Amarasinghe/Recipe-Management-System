@@ -3,41 +3,123 @@ const router = express.Router();
 const Recipe = require("../models/recipe");
 const authMiddleware = require("../middleware/authMiddleware");
 
+/*
+  CREATE RECIPE
+  POST /recipes
+  - Auth required
+  - Recipe linked to logged-in user
+*/
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const {
-      title,
-      ingredients,
-      instructions,
-      cookingTime,
-      difficulty,
-    } = req.body;
+    const { title, ingredients, instructions } = req.body;
 
     const recipe = new Recipe({
       title,
       ingredients,
       instructions,
-      cookingTime,
-      difficulty,
-      user: req.user.id, // authenticated user
+      user: req.user
     });
 
-    const savedRecipe = await recipe.save();
+    await recipe.save();
+    res.status(201).json(recipe);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
-    return res.status(201).json(savedRecipe);
-  } catch (error) {
-    // Field-specific validation errors
-    if (error.name === "ValidationError") {
-      const errors = {};
+/*
+  GET ALL RECIPES FOR LOGGED-IN USER
+  GET /recipes
+  - Auth required
+  - Only returns user's own recipes
+*/
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ user: req.user }).sort({
+      createdAt: -1
+    });
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-      Object.keys(error.errors).forEach((field) => {
-        errors[field] = error.errors[field].message;
-      });
+/*
+  GET SINGLE RECIPE
+  GET /recipes/:id
+  - Auth required
+  - Only owner can access
+*/
+router.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
 
-      return res.status(400).json({ errors });
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
     }
 
-    return res.status(500).json({ message: "Server error" });
+    if (recipe.user.toString() !== req.user) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    res.json(recipe);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/*
+  UPDATE RECIPE
+  PUT /recipes/:id
+  - Auth required
+  - Only owner can update
+  - Overwrites previous values
+*/
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    if (recipe.user.toString() !== req.user) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    recipe.title = req.body.title ?? recipe.title;
+    recipe.ingredients = req.body.ingredients ?? recipe.ingredients;
+    recipe.instructions = req.body.instructions ?? recipe.instructions;
+
+    await recipe.save();
+    res.json(recipe);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+/*
+  DELETE RECIPE
+  DELETE /recipes/:id
+  - Auth required
+  - Only owner can delete
+*/
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    if (recipe.user.toString() !== req.user) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await recipe.deleteOne();
+    res.json({ message: "Recipe deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

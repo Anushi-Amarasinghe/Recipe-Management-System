@@ -1,46 +1,41 @@
 const mongoose = require("mongoose");
 
+const instructionSchema = new mongoose.Schema(
+  {
+    stepNumber: {
+      type: Number,
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    }
+  },
+  { _id: false }
+);
+
 const recipeSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Title is required"],
-      trim: true,
+      required: true,
+      trim: true
     },
-
     ingredients: {
       type: [String],
-      required: [true, "Ingredients are required"],
-      validate: {
-        validator: function (value) {
-          return Array.isArray(value) && value.length > 0;
-        },
-        message: "Ingredients must be a non-empty list",
-      },
+      required: true,
+      validate: v => v.length > 0
     },
-
     instructions: {
-      type: String,
-      required: [true, "Instructions are required"],
+      type: [instructionSchema],
+      required: true,
+      validate: v => v.length > 0
     },
-
-    //  link to authenticated user
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-    },
-
-    // Optional fields
-    cookingTime: {
-      type: Number,
-      min: [1, "Cooking time must be at least 1 minute"],
-    },
-
-    difficulty: {
-      type: String,
-      enum: ["easy", "medium", "hard"],
-    },
+      required: true
+    }
   },
   { timestamps: true }
 );
