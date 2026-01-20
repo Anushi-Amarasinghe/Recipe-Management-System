@@ -100,7 +100,9 @@
       const data = await res.json();
 
       if (!res.ok) {
-        errorDiv.textContent = data.message || 'Login failed';
+        // Handle error response format
+        const errorMsg = data.error?.message || data.message || 'Login failed';
+        errorDiv.textContent = errorMsg;
         return;
       }
 
@@ -114,16 +116,35 @@
       // Save JWT token
       localStorage.setItem('token', data.token);
 
-      // Redirect
-      window.location.href = 'dashboard.html';
+      // ============================================
+      // CHECK USER ROLE AND REDIRECT ACCORDINGLY
+      // ============================================
+      
+      // Fetch user info to get role
+      const userRes = await fetch('/api/auth/me', {
+        headers: { 'Authorization': 'Bearer ' + data.token }
+      });
+
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        
+        // Redirect based on role
+        if (userData.role === 'admin') {
+          window.location.href = 'pages/admin-users.html';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
+      } else {
+        // Fallback to dashboard if can't get user info
+        window.location.href = 'dashboard.html';
+      }
 
     } catch (err) {
       console.error(err);
       errorDiv.textContent = 'Something went wrong. Try again.';
     }
   });
-</script>
-
+  </script>
 
 </body>
 </html>

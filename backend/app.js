@@ -4,8 +4,14 @@ const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
-const adminUserRoutes = require("./routes/adminUserRoutes");
 //const recipeRoutes = require("./routes/recipes");
+
+// ============================================
+// ADMIN ROUTES - US1, US2, US3
+// ============================================
+const adminUserRoutes = require("./routes/adminUserRoutes");
+const adminCategoryRoutes = require("./routes/adminCategoryRoutes");
+const adminRecipeRoutes = require("./routes/adminRecipeRoutes");
 
 const app = express();
 
@@ -22,11 +28,16 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-app.use("/api/admin/users", adminUserRoutes);
-
 // API routes
 app.use("/api/auth", authRoutes);
 //app.use("/api/recipes", recipeRoutes);
+
+// ============================================
+// ADMIN API ROUTES
+// ============================================
+app.use("/api/admin/users", adminUserRoutes);           // US3
+app.use("/api/admin/categories", adminCategoryRoutes);  // US1
+app.use("/api/admin/recipes", adminRecipeRoutes);       // US2
 
 // Handle 404 for unknown routes  
 app.use((req, res) => {
@@ -40,4 +51,3 @@ const recipeRoutes = require("./routes/recipe");
 app.use("/recipes", recipeRoutes);
 
 module.exports = app;
-

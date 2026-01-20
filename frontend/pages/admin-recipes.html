@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Manage Users | Recipe Management System</title>
+  <title>Admin - Manage Recipes | Recipe Management System</title>
   
-  <link rel="stylesheet" href="../css/admin-users.css" />
+  <link rel="stylesheet" href="../css/admin-recipes.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
@@ -24,7 +24,7 @@
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
       </a>
-      <a href="#" class="nav-item active">
+      <a href="admin-users.html" class="nav-item">
         <i class="fas fa-users"></i>
         <span>Manage Users</span>
       </a>
@@ -32,7 +32,7 @@
         <i class="fas fa-folder"></i>
         <span>Manage Categories</span>
       </a>
-      <a href="admin-recipes.html" class="nav-item">
+      <a href="#" class="nav-item active">
         <i class="fas fa-book-open"></i>
         <span>Manage Recipes</span>
       </a>
@@ -56,7 +56,7 @@
       <button class="menu-toggle" id="menuToggle">
         <i class="fas fa-bars"></i>
       </button>
-      <h1>Manage Users</h1>
+      <h1>Manage Recipes</h1>
       <div class="header-actions">
         <span class="date-display" id="dateDisplay"></span>
       </div>
@@ -65,53 +65,48 @@
     <!-- Stats Cards -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon total"><i class="fas fa-users"></i></div>
+        <div class="stat-icon total"><i class="fas fa-book-open"></i></div>
         <div class="stat-info">
-          <h3 id="totalUsers">0</h3>
-          <p>Total Users</p>
+          <h3 id="totalRecipes">0</h3>
+          <p>Total Recipes</p>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon active"><i class="fas fa-user-check"></i></div>
+        <div class="stat-icon easy"><i class="fas fa-seedling"></i></div>
         <div class="stat-info">
-          <h3 id="activeUsers">0</h3>
-          <p>Active</p>
+          <h3 id="easyRecipes">0</h3>
+          <p>Easy</p>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon suspended"><i class="fas fa-user-slash"></i></div>
+        <div class="stat-icon medium"><i class="fas fa-fire"></i></div>
         <div class="stat-info">
-          <h3 id="suspendedUsers">0</h3>
-          <p>Suspended</p>
+          <h3 id="mediumRecipes">0</h3>
+          <p>Medium</p>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon admins"><i class="fas fa-user-shield"></i></div>
+        <div class="stat-icon hard"><i class="fas fa-star"></i></div>
         <div class="stat-info">
-          <h3 id="adminCount">0</h3>
-          <p>Admins</p>
+          <h3 id="hardRecipes">0</h3>
+          <p>Hard</p>
         </div>
       </div>
     </div>
 
-    <!-- Users Section -->
-    <section class="users-section">
+    <!-- Recipes Section -->
+    <section class="recipes-section">
       <div class="section-header">
         <div class="search-box">
           <i class="fas fa-search"></i>
-          <input type="text" id="userSearch" placeholder="Search users by name or email..." />
+          <input type="text" id="recipeSearch" placeholder="Search recipes..." />
         </div>
         <div class="filter-group">
-          <select id="roleFilter">
-            <option value="all">All Roles</option>
-            <option value="user">Users</option>
-            <option value="admin">Admins</option>
-          </select>
-          <select id="statusFilter">
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="suspended">Suspended</option>
-            <option value="deleted">Deleted</option>
+          <select id="difficultyFilter">
+            <option value="all">All Difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
           </select>
         </div>
       </div>
@@ -119,33 +114,27 @@
       <!-- Bulk Actions -->
       <div class="bulk-actions" id="bulkActions" style="display: none;">
         <span id="selectedCount">0 selected</span>
-        <button class="btn btn-warning btn-sm" id="bulkDeactivateBtn">
-          <i class="fas fa-ban"></i> Deactivate
-        </button>
-        <button class="btn btn-success btn-sm" id="bulkReactivateBtn">
-          <i class="fas fa-check"></i> Reactivate
-        </button>
         <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">
-          <i class="fas fa-trash"></i> Delete
+          <i class="fas fa-trash"></i> Delete Selected
         </button>
       </div>
       
-      <!-- Users Table -->
+      <!-- Recipes Table -->
       <div class="table-container">
         <table class="data-table">
           <thead>
             <tr>
               <th><input type="checkbox" id="selectAll" /></th>
-              <th>User</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Joined</th>
+              <th>Recipe</th>
+              <th>Author</th>
+              <th>Difficulty</th>
+              <th>Cooking Time</th>
+              <th>Created</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="usersTableBody">
-            <!-- Users will be loaded here -->
+          <tbody id="recipesTableBody">
+            <!-- Recipes will be loaded here -->
           </tbody>
         </table>
       </div>
@@ -155,42 +144,35 @@
     </section>
   </main>
 
-  <!-- Deactivate User Modal -->
-  <div class="modal" id="deactivateModal">
-    <div class="modal-content modal-sm">
+  <!-- View Recipe Modal -->
+  <div class="modal" id="viewModal">
+    <div class="modal-content modal-lg">
       <div class="modal-header">
-        <h3>Deactivate User</h3>
-        <button class="close-btn" data-close="deactivateModal">&times;</button>
+        <h3 id="viewRecipeTitle">Recipe Details</h3>
+        <button class="close-btn" data-close="viewModal">&times;</button>
       </div>
       <div class="modal-body">
-        <p id="deactivateMessage">Are you sure you want to deactivate this user?</p>
-        <div class="form-group">
-          <label for="deactivateReason">Reason (optional)</label>
-          <textarea id="deactivateReason" rows="3" placeholder="Enter reason for deactivation..."></textarea>
+        <div class="recipe-details" id="recipeDetails">
+          <!-- Recipe details will be loaded here -->
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close="deactivateModal">Cancel</button>
-        <button type="button" class="btn btn-warning" id="confirmDeactivateBtn">Deactivate</button>
+        <button type="button" class="btn btn-secondary" data-close="viewModal">Close</button>
+        <button type="button" class="btn btn-danger" id="viewDeleteBtn">Delete Recipe</button>
       </div>
     </div>
   </div>
 
-  <!-- Delete User Modal -->
+  <!-- Delete Confirmation Modal -->
   <div class="modal" id="deleteModal">
     <div class="modal-content modal-sm">
       <div class="modal-header">
-        <h3>Delete User</h3>
+        <h3>Delete Recipe</h3>
         <button class="close-btn" data-close="deleteModal">&times;</button>
       </div>
       <div class="modal-body">
-        <p id="deleteMessage">Are you sure you want to delete this user?</p>
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="forceDelete" />
-            Permanently delete (cannot be undone)
-          </label>
-        </div>
+        <p id="deleteMessage">Are you sure you want to delete this recipe?</p>
+        <p class="warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-close="deleteModal">Cancel</button>
@@ -207,6 +189,6 @@
     <div class="spinner"></div>
   </div>
 
-  <script src="../js/admin-users.js"></script>
+  <script src="../js/admin-recipes.js"></script>
 </body>
 </html>
