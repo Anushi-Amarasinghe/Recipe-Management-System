@@ -1,10 +1,8 @@
-// authCheck.js
 
-// Get token from localStorage
 const token = localStorage.getItem("token");
 
 if (!token) {
-  // Not logged in, redirect to login page
+  
   window.location.href = "login.html";
 }
 
@@ -18,11 +16,11 @@ async function loadUser() {
 
     const data = await res.json();
 
-    // If there’s a greeting element, show username
+    
     const greetingEl = document.getElementById("greeting");
     if (greetingEl) greetingEl.textContent = `Hello, ${data.f_name}!`;
 
-    return data; // return user data if needed
+    return data; 
   } catch (err) {
     console.error(err);
     localStorage.removeItem("token");
@@ -30,7 +28,7 @@ async function loadUser() {
   }
 }
 
-// Logout button handling (if present)
+
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
@@ -39,5 +37,4 @@ if (logoutBtn) {
   });
 }
 
-// Run immediately
 loadUser();

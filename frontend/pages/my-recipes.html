@@ -1,41 +1,35 @@
-<div class="top-bar">
-    <h2>My Recipes</h2>
-    <button class="add-recipe" id="addRecipeBtn">+ Add New Recipe</button>
-</div>
 
-<div class="recipes-grid" id="recipesGrid">
-    <!-- Recipe cards -->
-    <div class="recipe-card">
-    <div class="image-placeholder">[IMAGE]</div>
-    <div class="content">
-        <div class="title">My Recipe 1</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
-    </div>
-    </div>
-    <div class="recipe-card">
-    <div class="image-placeholder">[IMAGE]</div>
-    <div class="content">
-        <div class="title">My Recipe 2</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
-    </div>
-    </div>
-    <div class="recipe-card">
-    <div class="image-placeholder">[IMAGE]</div>
-    <div class="content">
-        <div class="title">My Recipe 3</div>
-        <div class="rating">Rating: ★★★★☆</div>
-        <div class="actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        </div>
-    </div>
-    </div>
-</div>
+<section class="page-my-recipes">
+  <h2>My Recipes</h2>
+
+  <button id="addRecipeBtn">+ Add Recipe</button>
+
+  
+  <div id="recipeFormWrap" style="display:none; margin-top:1rem;">
+    <form id="recipeForm">
+      <input type="hidden" id="recipeId" />
+      <div>
+        <label>Title</label><br />
+        <input id="title" required />
+      </div>
+      <div>
+        <label>Ingredients (comma separated)</label><br />
+        <input id="ingredients" placeholder="eg. flour, sugar, eggs" required />
+      </div>
+      <div>
+        <label>Instructions (one per line)</label><br />
+        <textarea id="instructions" rows="6" placeholder="Put each step on its own line" required></textarea>
+      </div>
+      <div style="margin-top:8px;">
+        <button type="submit" id="saveRecipeBtn">Save</button>
+        <button type="button" id="cancelRecipeBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="myRecipesContainer" class="recipes-grid" style="margin-top:1rem;">
+    
+  </div>
+
+  <div id="myRecipesError" style="color:crimson; display:none;"></div>
+</section>

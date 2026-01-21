@@ -6,10 +6,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-/**
- * REGISTER USER
- * POST /api/auth/register
- */
+
 router.post("/register", async (req, res) => {
   try {
     const { f_name, l_name, email, password, confirm_password } = req.body;
@@ -52,14 +49,14 @@ router.post("/register", async (req, res) => {
 });
 
 /**
- * @route   POST /api/auth/login
- * @desc    Login user
+ * @route   
+ * @desc    
  */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
+    
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -100,7 +97,7 @@ router.post("/login", async (req, res) => {
 // Get current logged-in user
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findById(req.user).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {

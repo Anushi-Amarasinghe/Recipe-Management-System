@@ -1,14 +1,23 @@
+
 const express = require("express");
 const router = express.Router();
 const Recipe = require("../models/recipe");
 const authMiddleware = require("../middleware/authMiddleware");
 
-/*
-  CREATE RECIPE
-  POST /recipes
-  - Auth required
-  - Recipe linked to logged-in user
-*/
+
+
+router.get("/all", async (req, res) => {
+  try {
+    const recipes = await Recipe.find()
+      .sort({ createdAt: -1 })
+      .populate("user", "f_name l_name"); 
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { title, ingredients, instructions } = req.body;
@@ -27,12 +36,7 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-/*
-  GET ALL RECIPES FOR LOGGED-IN USER
-  GET /recipes
-  - Auth required
-  - Only returns user's own recipes
-*/
+
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const recipes = await Recipe.find({ user: req.user }).sort({
@@ -44,23 +48,14 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-/*
-  GET SINGLE RECIPE
-  GET /recipes/:id
-  - Auth required
-  - Only owner can access
-*/
+
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
 
-    if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found" });
-    }
-
-    if (recipe.user.toString() !== req.user) {
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (recipe.user.toString() !== req.user)
       return res.status(403).json({ message: "Not authorized" });
-    }
 
     res.json(recipe);
   } catch (err) {
@@ -68,25 +63,15 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-/*
-  UPDATE RECIPE
-  PUT /recipes/:id
-  - Auth required
-  - Only owner can update
-  - Overwrites previous values
-*/
+
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
-
-    if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found" });
-    }
-
-    if (recipe.user.toString() !== req.user) {
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (recipe.user.toString() !== req.user)
       return res.status(403).json({ message: "Not authorized" });
-    }
 
+    
     recipe.title = req.body.title ?? recipe.title;
     recipe.ingredients = req.body.ingredients ?? recipe.ingredients;
     recipe.instructions = req.body.instructions ?? recipe.instructions;
@@ -98,23 +83,13 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-/*
-  DELETE RECIPE
-  DELETE /recipes/:id
-  - Auth required
-  - Only owner can delete
-*/
+
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
-
-    if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found" });
-    }
-
-    if (recipe.user.toString() !== req.user) {
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (recipe.user.toString() !== req.user)
       return res.status(403).json({ message: "Not authorized" });
-    }
 
     await recipe.deleteOne();
     res.json({ message: "Recipe deleted successfully" });
