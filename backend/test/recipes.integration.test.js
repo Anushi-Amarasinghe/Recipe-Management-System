@@ -9,20 +9,20 @@ let mongoServer;
 let token;
 
 beforeAll(async () => {
-  // Start in-memory MongoDB
+  
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
 
-  // Create test user
+  
   const user = await User.create({
     f_name: "Test",
     l_name: "User",
     email: "test@test.com",
-    password: "hashedpassword", // not used directly
+    password: "hashedpassword", 
     active: 1
   });
 
-  // Generate valid JWT
+  
   token = jwt.sign(
     { id: user._id },
     process.env.JWT_SECRET,
@@ -58,7 +58,7 @@ describe("RECIPES API – Integration Tests", () => {
       .post("/api/recipes")
       .set("Authorization", "Bearer " + token)
       .send({
-        // Missing title
+        
         ingredients: ["Eggs"]
       });
 
