@@ -1,0 +1,55 @@
+<!-- TOP BAR -->
+<div class="top-bar">
+  <h2>Recipe Details</h2>
+  <a class="btn btn-light" href="/dashboard.html" id="backBtn">Back to Recipes</a>
+</div>
+
+<!-- Recipe Details Form (view-only) -->
+<section class="recipes-view">
+  <form id="recipedetailsForm" class="form-grid">
+
+    <!-- Recipe Name -->
+    <div class="field">
+      <label for="title">Recipe Name</label>
+      <input id="title" placeholder="Recipe Name" disabled>
+    </div>
+
+    <!-- Category -->
+    <div class="field">
+      <label for="category">Category</label>
+      <input id="category" placeholder="Category" disabled>
+    </div>
+
+    <!-- Rating -->
+    <div class="field">
+      <label>Rating</label>
+      <div class="stars" aria-label="Recipe rating">
+        <span id="starsText">No rating</span>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="field field-full">
+      <label>Recipe Image</label>
+      <div class="image-preview" id="imagePreview">
+        <span class="image-placeholder">[IMAGE]</span>
+        <img id="previewImg" alt="Recipe preview" style="display:none;">
+      </div>
+    </div>
+
+    <!-- Recipe Details -->
+    <div class="field field-full">
+      <label for="wishText">Recipe Details</label>
+      <textarea id="wishText" disabled></textarea>
+    </div>
+
+    <!-- Favourites -->
+    <div class="field field-full">
+      <label>
+        <input type="checkbox" id="favourite" disabled>
+        Save to favourites
+      </label>
+    </div>
+
+  </form>
+</section>

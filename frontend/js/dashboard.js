@@ -5,6 +5,25 @@
 =========================== */
 const mainContent = document.getElementById("mainContent");
 
+// Handle dynamic buttons inside loaded pages
+mainContent.addEventListener("click", async (e) => {
+
+  // OPEN button
+  const openBtn = e.target.closest(".open-btn");
+  if (openBtn) {
+    const recipeId = openBtn.dataset.id;
+    if (!recipeId) return;
+
+    // Store recipe ID in sessionStorage so view-recipe.js can fetch it
+    sessionStorage.setItem("viewRecipeId", recipeId);
+
+    // Load view page
+    loadPage("recipedetails.html"); // or your proper path
+    return;
+  }
+
+});
+
 
 /* ===========================
    Utility functions
@@ -35,12 +54,16 @@ async function loadPage(page, btnId) {
     const html = await res.text();
     mainContent.innerHTML = html;
 
-    // Call page-specific initializer functions
+    // Page-specific initializers
     if (page === "my-recipes.html" && window.loadMyRecipes) {
       await window.loadMyRecipes();
     }
-    if (page === "recipes.html" && window.loadAllRecipes) {
-      await window.loadAllRecipes();
+    if (page === "recipes.html") {
+      if (window.loadAllRecipes) await window.loadAllRecipes();
+      if (window.initRecipeFilters) window.initRecipeFilters(); // <-- attach filters here
+    }
+    if (page === "settings.html" && window.loadSettings) {
+      window.loadSettings(); // initialize settings page
     }
 
     // Set active sidebar button
@@ -207,8 +230,8 @@ async function loadAllRecipes() {
             <div class="title">${escapeHtml(r.title)}</div>
             <div class="rating">Rating: ${renderStars(r.rating || 0)}</div>
             <div class="actions">
-              <button class="edit-btn" data-id="${r._id}">Edit</button>
-              <button class="delete-btn" data-id="${r._id}">Delete</button>
+              <button class="open-btn" data-id="${r._id}">Open</button>
+              <button class="share-btn" data-id="${r._id}">Share</button>
             </div>
           </div>
         </div>

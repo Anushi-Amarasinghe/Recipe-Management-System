@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
+app.use("/api/recipes/:id", recipeRoutes);
 
 // Handle 404 for unknown routes
 app.use((req, res) => {

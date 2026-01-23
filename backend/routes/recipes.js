@@ -96,6 +96,24 @@ router.get("/mine", auth, userOrAdmin, async (req, res) => {
   }
 });
 
+// GET /api/recipes/:id - get single recipe by ID
+router.get("/:id", auth, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+
+    return res.json({ recipe });
+  } catch (err) {
+    console.error("Get recipe by ID error:", err);
+    return res.status(500).json({
+      message: "Server error fetching recipe",
+      error: err?.message,
+      name: err?.name,
+    });
+  }
+});
+
+
 // DELETE /api/recipes/:id - protected + role-based access + ownership check
 router.delete("/:id", auth, userOrAdmin, async (req, res) => {
   try {

@@ -1,10 +1,13 @@
-/* Base styles (same as before) */
+/* ===========================
+   Base Styles
+=========================== */
 * {
   box-sizing: border-box;
 }
 
 body, html {
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #F9F9F9;
   height: 100vh;
@@ -12,7 +15,9 @@ body, html {
   flex-direction: column;
 }
 
-/* Header */
+/* ===========================
+   Header
+=========================== */
 header {
   display: flex;
   align-items: center;
@@ -23,7 +28,7 @@ header {
 }
 
 header .logo img {
-  height: 40px; /* Adjust as needed */
+  height: 40px;
   width: auto;
 }
 
@@ -40,7 +45,9 @@ header .username {
   color: #333333;
 }
 
-/* User profile (top right) */
+/* ===========================
+   User Profile (top right)
+=========================== */
 .user-profile {
   display: flex;
   align-items: center;
@@ -55,7 +62,6 @@ header .username {
   border-radius: 25px;
   padding: 6px 14px;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
   font-size: 14px;
   transition: all 0.3s ease;
 }
@@ -78,14 +84,18 @@ header .username {
   color: #333;
 }
 
-/* Layout */
+/* ===========================
+   Layout
+=========================== */
 .container {
   flex: 1;
   display: flex;
   height: calc(100vh - 72px);
 }
 
-/* Sidebar */
+/* ===========================
+   Sidebar
+=========================== */
 aside.sidebar {
   width: 200px;
   background: white;
@@ -97,7 +107,8 @@ aside.sidebar {
   transition: width 0.3s ease;
 }
 
-aside.sidebar button, aside.sidebar a {
+aside.sidebar button,
+aside.sidebar a {
   display: block;
   border: 1px solid #000;
   background: white;
@@ -107,13 +118,14 @@ aside.sidebar button, aside.sidebar a {
   cursor: pointer;
   text-decoration: none;
   text-align: center;
-  transition: background-color 0.3s ease;
-  user-select: none;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-aside.sidebar button.active, aside.sidebar a.active,
-aside.sidebar button:hover, aside.sidebar a:hover {
+aside.sidebar button.active,
+aside.sidebar a.active,
+aside.sidebar button:hover,
+aside.sidebar a:hover {
   background: black;
   color: white;
 }
@@ -122,7 +134,9 @@ aside.sidebar button.logout {
   margin-top: auto;
 }
 
-/* Main content */
+/* ===========================
+   Main Content
+=========================== */
 main.content {
   flex: 1;
   padding: 1.5rem 2rem;
@@ -145,7 +159,9 @@ main.content .top-bar h2 {
   font-weight: 600;
 }
 
-main.content .top-bar button.add-recipe {
+/* Top bar add-recipe button/link */
+main.content .top-bar button.add-recipe,
+main.content .top-bar a.add-recipe {
   background: black;
   color: white;
   border: none;
@@ -154,22 +170,34 @@ main.content .top-bar button.add-recipe {
   font-weight: 600;
   border-radius: 4px;
   user-select: none;
+  text-decoration: none; /* important for <a> */
+  text-align: center;
   transition: background-color 0.3s ease;
 }
+
+main.content .top-bar button.add-recipe:hover,
+main.content .top-bar a.add-recipe:hover {
+  background: #333;
+}
+
 
 main.content .top-bar button.add-recipe:hover {
   background: #333;
 }
 
-/* Recipes grid */
+/* ===========================
+   Recipes Grid
+=========================== */
 .recipes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
 }
 
-/* Recipe card */
+/* ===========================
+   Recipe Card
+=========================== */
 .recipe-card {
   background: white;
   border: 1px solid #ddd;
@@ -223,7 +251,6 @@ main.content .top-bar button.add-recipe:hover {
   background: white;
   font-weight: 600;
   cursor: pointer;
-  user-select: none;
   border-radius: 4px;
   transition: background-color 0.3s ease;
 }
@@ -233,7 +260,9 @@ main.content .top-bar button.add-recipe:hover {
   color: #fff;
 }
 
-/* Align title and favourite icon */
+/* ===========================
+   Title + Favourite
+=========================== */
 .title-wrapper {
   display: flex;
   justify-content: space-between;
@@ -250,7 +279,7 @@ main.content .top-bar button.add-recipe:hover {
 .title-wrapper .favourites {
   cursor: pointer;
   font-size: 1.2rem;
-  color: #ff4d6d; /* Heart color */
+  color: #ff4d6d;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -259,14 +288,47 @@ main.content .top-bar button.add-recipe:hover {
   color: #ff1a3c;
 }
 
-/* Responsive Styles */
+/* ===========================
+   Filter Bar
+=========================== */
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-/* Tablets (width <= 1024px) */
+.filter-bar select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #4CAF50;
+}
+
+.filter-bar button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #000;
+  background: black;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-bar button:hover {
+  background: #333;
+}
+
+/* ===========================
+   Responsive Styles
+=========================== */
+
+/* Tablets */
 @media (max-width: 1024px) {
   header {
     padding: 1rem;
   }
-  
+
   header input[type="search"] {
     margin: 0 1rem;
   }
@@ -301,19 +363,12 @@ main.content .top-bar button.add-recipe:hover {
   }
 }
 
-/* Mobile (width <= 600px) */
+/* Mobile */
 @media (max-width: 600px) {
   header {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
-  }
-
-  header .logo,
-  header .username {
-    border: none;
-    padding: 0;
-    font-weight: 700;
   }
 
   header input[type="search"] {
@@ -348,34 +403,4 @@ main.content .top-bar button.add-recipe:hover {
   .recipes-grid {
     grid-template-columns: 1fr !important;
   }
-}
-
-/* Filter bar */
-.filter-bar {
-  display: flex;
-  gap: 1rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-bar select {
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #4CAF50;
-  font-family: 'Poppins', sans-serif;
-}
-
-.filter-bar button {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  border: 1px solid #000;
-  background: black;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.filter-bar button:hover {
-  background: #333;
 }

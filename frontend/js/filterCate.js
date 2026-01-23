@@ -4,9 +4,9 @@ function initRecipeFilters() {
   const filterRegion = document.getElementById('filterRegion');
   const filterSort = document.getElementById('filterSort');
   const clearBtn = document.getElementById('clearFilters');
-  const grid = document.getElementById('recipesGrid');
+  const grid = document.getElementById('recipesGridA'); // <-- correct ID
 
-  if (!grid || !clearBtn) return; // safety check
+  if (!grid || !clearBtn || !filterRating || !filterCategory || !filterRegion || !filterSort) return;
 
   function applyFilters() {
     const cards = Array.from(grid.querySelectorAll('.recipe-card'));
@@ -17,16 +17,19 @@ function initRecipeFilters() {
         Number(card.dataset.rating) >= Number(filterRating.value)
       );
     }
+
     if (filterCategory.value) {
       filteredCards = filteredCards.filter(card =>
-        card.dataset.category === filterCategory.value
+        card.dataset.category.toLowerCase() === filterCategory.value.toLowerCase()
       );
     }
+
     if (filterRegion.value) {
       filteredCards = filteredCards.filter(card =>
-        card.dataset.region === filterRegion.value
+        card.dataset.region.toLowerCase() === filterRegion.value.toLowerCase()
       );
     }
+
     if (filterSort.value) {
       filteredCards.sort((a, b) =>
         filterSort.value === 'latest'
@@ -39,7 +42,6 @@ function initRecipeFilters() {
     filteredCards.forEach(card => grid.appendChild(card));
   }
 
-  // Attach event listeners
   filterRating.addEventListener('change', applyFilters);
   filterCategory.addEventListener('change', applyFilters);
   filterRegion.addEventListener('change', applyFilters);
