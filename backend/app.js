@@ -13,6 +13,9 @@ const app = express();
 // Middleware
 app.use(cors());
 // Configure body parser with size limits (10kb for auth endpoints, 1mb for others)
+// Apply 10kb limit to auth routes (runs first, parses body for /api/auth routes)
+app.use("/api/auth", authBodyLimiter);
+// Apply 1mb limit to all other routes (Express will skip if body already parsed)
 app.use(express.json({ limit: "1mb" }));
 
 // Serve frontend

@@ -19,6 +19,13 @@ async function renderMyRecipes() {
 
   grid.innerHTML = "<p>Loading…</p>";
 
+  // Get token for authenticated request
+  const token = localStorage.getItem("token");
+  if (!token) {
+    grid.innerHTML = "<p>Please log in to view your recipes.</p>";
+    return;
+  }
+
   try {
     const res = await fetch("/api/recipes/mine");
     const data = await res.json().catch(() => ({}));
@@ -31,7 +38,7 @@ async function renderMyRecipes() {
     const recipes = data.recipes || [];
 
     if (!recipes.length) {
-      grid.innerHTML = "<p>No recipes yet. Click “Add New Recipe”.</p>";
+      grid.innerHTML = "<p>No recipes yet. Click "Add New Recipe".</p>";
       return;
     }
 
@@ -71,6 +78,9 @@ async function renderMyRecipes() {
 async function deleteRecipeById(id) {
   const res = await fetch(`/api/recipes/mine${encodeURIComponent(id)}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   });
 
   const data = await res.json().catch(() => ({}));

@@ -23,7 +23,9 @@ if (!token) {
  */
 async function checkAdminAccess() {
   try {
-    const res = await fetch("/api/auth/me", {
+    // Use admin-specific endpoint which has adminOnly middleware
+    // This provides server-side verification of admin role
+    const res = await fetch("/api/auth/admin/me", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,7 +33,7 @@ async function checkAdminAccess() {
     });
 
     if (!res.ok) {
-      // Try to read the error message
+      // Try to read the error message (standardized format)
       let msg = `Request failed with status ${res.status}`;
       try {
         const errBody = await res.json();
@@ -49,7 +51,13 @@ async function checkAdminAccess() {
       // Clear token on auth failures
       if (res.status === 401 || res.status === 403) {
         localStorage.removeItem("token");
-        redirectToAdminLogin();
+        // If 403, user might be a regular user, redirect to user login
+        if (res.status === 403) {
+          alert("Access denied. Admin privileges required.");
+          redirectToUserLogin();
+        } else {
+          redirectToAdminLogin();
+        }
         return null;
       }
 
@@ -59,7 +67,8 @@ async function checkAdminAccess() {
 
     const user = await res.json();
 
-    // Verify user is admin
+    // Double-check role on client side (defense in depth)
+    // The server already verified via adminOnly middleware, but we check again
     if (user.role !== "admin") {
       console.warn("Non-admin user attempted to access admin page:", user.email);
       localStorage.removeItem("token");

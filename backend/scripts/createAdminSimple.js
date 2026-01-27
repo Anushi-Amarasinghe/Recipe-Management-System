@@ -30,7 +30,7 @@ async function createAdmin() {
     }
 
     await mongoose.connect(uri);
-    console.log("✅ Connected to MongoDB");
+    console.log(" Connected to MongoDB");
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ 
@@ -39,19 +39,19 @@ async function createAdmin() {
 
     if (existingAdmin) {
       if (existingAdmin.role === "admin") {
-        console.log(`⚠️  Admin user already exists with email: ${ADMIN_CONFIG.email}`);
+        console.log(` Admin user already exists with email: ${ADMIN_CONFIG.email}`);
         console.log("   Skipping creation...");
         await mongoose.disconnect();
         return;
       } else {
         // Update existing user to admin
-        console.log(`📝 Updating existing user to admin role...`);
+        console.log(` Updating existing user to admin role...`);
         const hashedPassword = await bcrypt.hash(ADMIN_CONFIG.password, 10);
         existingAdmin.password = hashedPassword;
         existingAdmin.role = "admin";
         existingAdmin.active = 1;
         await existingAdmin.save();
-        console.log("✅ User updated to admin successfully!");
+        console.log(" User updated to admin successfully!");
         await mongoose.disconnect();
         return;
       }
@@ -76,7 +76,7 @@ async function createAdmin() {
     }
 
     if (passwordErrors.length > 0) {
-      console.error("❌ Password validation failed:");
+      console.error(" Password validation failed:");
       passwordErrors.forEach(err => console.error(`   - ${err}`));
       await mongoose.disconnect();
       process.exit(1);
@@ -110,10 +110,10 @@ async function createAdmin() {
 
     // Disconnect
     await mongoose.disconnect();
-    console.log("\n✅ Disconnected from MongoDB");
+    console.log("\n Disconnected from MongoDB");
 
   } catch (error) {
-    console.error("\n❌ Error creating admin user:");
+    console.error("\n Error creating admin user:");
     console.error(error.message);
     if (error.code === 11000) {
       console.error("   Email already exists in database");
