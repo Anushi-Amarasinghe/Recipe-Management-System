@@ -135,6 +135,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ===========================
    My Recipes Page
+=========================== */
+
+
 async function loadMyRecipes() {
   const grid = document.getElementById("recipesGrid");
   if (!grid) return;
