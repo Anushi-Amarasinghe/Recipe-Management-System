@@ -9,6 +9,7 @@ async function loadPage(page, btnId) {
     const html = await res.text();
     mainContent.innerHTML = html;
     if (page === "my-recipes.html") loadMyRecipes();
+    if (page === "recipes.html") loadAllRecipes();
 
    
 if (page === "my-recipes.html" && window.renderMyRecipes) {
@@ -85,6 +86,55 @@ mainContent.addEventListener("click", async (e) => {
     }
   }
 });
+
+async function loadAllRecipes() {
+  const grid = document.getElementById("recipesGrid");
+  if (!grid) return;
+
+  grid.innerHTML = "<p>Loading recipes...</p>";
+
+  try {
+    // Public endpoint - no auth required
+    const res = await fetch("/api/recipes");
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to fetch recipes");
+    }
+
+    // Backend returns { recipes: [...] }
+    const recipes = Array.isArray(data.recipes) ? data.recipes : [];
+
+    if (recipes.length === 0) {
+      grid.innerHTML = "<p>No recipes found. Be the first to add one!</p>";
+      return;
+    }
+
+    grid.innerHTML = recipes
+      .map((r) => `
+        <div class="recipe-card">
+          <div class="image-placeholder">
+            ${
+              r.imageUrl
+                ? `<img src="${escapeHtml(r.imageUrl)}" alt="${escapeHtml(r.title)}" style="width:100%;height:100%;object-fit:cover;" />`
+                : "[IMAGE]"
+            }
+          </div>
+          <div class="content">
+            <div class="title">${escapeHtml(r.title)}</div>
+            <div class="desc">${escapeHtml(r.desc || r.description || "")}</div>
+            <div class="rating">Rating: ${renderStars(r.rating || 0)}</div>
+            <div class="category">${escapeHtml(r.category || "Uncategorised")}</div>
+          </div>
+        </div>
+      `)
+      .join("");
+
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
+  }
+}
 
 async function loadMyRecipes() {
   const grid = document.getElementById("recipesGrid");

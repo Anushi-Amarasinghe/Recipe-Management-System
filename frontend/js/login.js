@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('loginForm');
   const loginBtn = document.getElementById('loginBtn');
   const sendOtpBtn = document.getElementById('sendOtpBtn');
-  const otpBtnGroup = document.getElementById('otpBtnGroup');
   const resendOtpBtn = document.getElementById('resendOtpBtn');
   const verifyOtpBtn = document.getElementById('verifyOtpBtn');
   const errorDiv = document.getElementById('error');
@@ -50,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        errorDiv.textContent = data.message || 'Invalid email or password';
+        errorDiv.textContent = data.error?.message || data.message || 'Invalid email or password';
         return;
       }
 
@@ -90,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        errorDiv.textContent = data.message || 'Failed to send OTP';
+        errorDiv.textContent = data.error?.message || data.message || 'Failed to send OTP';
         return;
       }
 
@@ -131,8 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (!res.ok) {
-        errorDiv.textContent = data.message || 'OTP verification failed';
-        errorDivOtp.textContent = data.message || 'OTP verification failed';
+        const msg = data.error?.message || data.message || 'OTP verification failed';
+        errorDiv.textContent = msg;
+        errorDivOtp.textContent = msg;
         return;
       }
 
@@ -150,14 +150,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Overlay controls
+  // Overlay controls — also reset form when "Back To Login" is used
   window.closeOverlay = function() {
     otpOverlay.classList.remove('active');
     clearInterval(timerInterval);
-    otpTimerDisplay.textContent = "02:00"; // reset timer
+    otpTimerDisplay.textContent = "02:00";
     verifyOtpBtn.disabled = false;
-    if (enterOtpBtn) enterOtpBtn.style.display = 'block';
-  }
+    if (otpInput) otpInput.value = '';
+    if (errorDivOtp) errorDivOtp.textContent = '';
+    if (infoDiv) infoDiv.textContent = '';
+    // Reset to step 1: enable inputs, show Login, hide Send OTP
+    emailInput.disabled = false;
+    passwordInput.disabled = false;
+    loginBtn.style.display = 'block';
+    sendOtpBtn.style.display = 'none';
+    if (enterOtpBtn) enterOtpBtn.style.display = 'none';
+  };
 
   // Enter OTP button
   if (enterOtpBtn && otpOverlay) {

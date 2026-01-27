@@ -205,6 +205,24 @@ main.content .top-bar button.add-recipe:hover {
   margin-bottom: 0.25rem;
 }
 
+.recipe-card .desc {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.recipe-card .category {
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
 .recipe-card .rating {
   color: #ffb700;
   margin-bottom: 1rem;
