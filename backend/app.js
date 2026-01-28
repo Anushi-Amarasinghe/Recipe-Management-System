@@ -4,26 +4,27 @@ const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
-<<<<<<< HEAD
-const recipeRoutes = require("./routes/recipe"); 
-=======
 const recipeRoutes = require("./routes/recipes");
 const commentRoutes = require("./routes/comments");
 const usersRoutes = require("./routes/users");
->>>>>>> main
+
+const authBodyLimiter = require("./middleware/bodySizeLimiter");
 
 const app = express();
 
 // Middleware
 app.use(cors());
-// Configure body parser with size limits (10kb for auth endpoints, 1mb for others)
-// Apply 10kb limit to auth routes (runs first, parses body for /api/auth routes)
+
+// Configure body parser with size limits
+// Apply 10kb limit to auth routes
 app.use("/api/auth", authBodyLimiter);
-// Apply 1mb limit to all other routes (Express will skip if body already parsed)
+
+// Apply 1mb limit to all other routes
 app.use(express.json({ limit: "1mb" }));
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
+
 // Serve uploaded images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -35,15 +36,10 @@ app.get("/", (req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
-<<<<<<< HEAD
-
-// 404 handler (MUST be last)
-=======
 app.use("/api/comments", commentRoutes);
 app.use("/api/users", usersRoutes);
 
-// Handle 404 for unknown routes (MUST be last)
->>>>>>> main
+// 404 handler (MUST be last)
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
