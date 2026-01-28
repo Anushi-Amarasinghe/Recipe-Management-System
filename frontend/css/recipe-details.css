@@ -1,0 +1,386 @@
+/* ===========================
+   Recipe Details Page Styles
+=========================== */
+
+/* Page Wrapper */
+.page-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ===========================
+   Layout: Form + Meta
+=========================== */
+.recipe-main-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Left form 66%, Right meta 33% */
+  gap: 2rem;
+}
+
+/* Left: Form */
+.recipe-details-card {
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.field label {
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.field input,
+.field textarea {
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: #fefefe;
+}
+
+.field textarea {
+  resize: vertical;
+  width: 100%;
+}
+
+.field input[disabled],
+.field textarea[disabled] {
+  background: #fafafa;
+  color: var(--muted);
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #ffb700;
+}
+
+.image-preview {
+  height: 220px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-placeholder {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.fav-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Right: Meta + Author */
+.recipe-meta-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.recipe-meta-wrapper > .recipe-meta {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.meta-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.meta-value {
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.recipe-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.recipe-author img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-name {
+  font-weight: 600;
+  margin: 0;
+}
+
+.author-role {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ===========================
+   Comments Section
+=========================== */
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comments-section h3 {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comment-form textarea {
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.comment-form .btn {
+  align-self: flex-end;
+  padding: 0.6rem 1.3rem;
+  border-radius: 10px;
+  font-weight: 600;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.comment-form .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(76, 175, 80, 0.35);
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 900px) {
+  .recipe-main-layout {
+    grid-template-columns: 1fr; /* Stack on smaller screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .page-inner {
+    padding: 1rem;
+  }
+}
+
+.likes-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.likes-wrapper button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f3f4f6;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.likes-wrapper button:hover {
+  background-color: #E5E7EB;
+}
+
+.likes-wrapper button i {
+  font-size: 16px;
+}
+
+/* Optional: separate colors for like/dislike */
+.like-btn i {
+  color: #4CAF50;
+}
+.dislike-btn i {
+  color: #F44336;
+}
+
+.like-btn:hover i {
+  color: #388E3C;
+}
+
+/* =========================
+   Comments Section
+========================= */
+
+.comments-section {
+  margin-top: 32px;
+}
+
+.comments-section h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+/* Comment cards */
+.comment-card {
+  display: flex;
+  gap: 12px;
+  background-color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border: 1px solid #E5E7EB;
+}
+
+.comment-card img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #1364bb;
+}
+
+.comment-card p:first-child {
+  font-weight: 600;
+  color: #111827;
+}
+
+.comment-card p:first-child span {
+  font-weight: 400;
+  color: #6B7280;
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+/* Comment input form */
+.comment-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-input-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.comment-input-wrapper .comment-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-top: 4px;
+}
+
+.comment-input-wrapper textarea {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #D1D5DB;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+}
+
+.comment-input-wrapper textarea:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.comment-form .actions-bar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.comment-form .btn-primary {
+  background-color: #4CAF50;
+  border: 1px solid #4CAF50;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  transition: 0.2s all;
+}
+
+.comment-form .btn-primary:hover {
+  background-color: #45A049;
+  border-color: #45A049;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .comment-card {
+    flex-direction: column;
+  }
+
+  .comment-input-wrapper {
+    flex-direction: column;
+  }
+
+  .comment-input-wrapper .comment-avatar {
+    margin-left: 0;
+  }
+}

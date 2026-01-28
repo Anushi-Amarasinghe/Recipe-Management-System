@@ -1,55 +1,85 @@
-/* style.css */
+/* style.css – refined login UI */
+
+:root {
+  --primary: #4CAF50;
+  --primary-soft: #C8E6C9;
+  --accent: #FF9800;
+  --bg: #F9F9F9;
+  --text: #333333;
+  --muted: #666666; /* Consistent 6-digit hex */
+}
 
 body {
-  background-color: #F9F9F9;
+  background: linear-gradient(135deg, var(--bg), var(--primary-soft));
   font-family: 'Poppins', sans-serif;
-  color: #333333;
+  color: var(--text);
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
+/* ===== Login Wrapper ===== */
 .login-wrapper {
-  background-color: #C8E6C9; 
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  width: 350px;
+  background: var(--card, #ffffff); /* fallback for --card */
+  padding: 2.2rem;
+  border-radius: 16px;
+  width: 360px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.04);
+  animation: fadeIn 0.5s ease-in-out;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Headings ===== */
 .login-card h2 {
-  color: #4CAF50;
-  margin-bottom: 0.5rem;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .subtitle {
-  color: #333333;
+  color: var(--muted);
   margin-bottom: 2rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
+/* ===== Input Fields ===== */
 .input-group {
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
-  background-color: #FFFFFF;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  border: 1px solid #C8E6C9;
-  transition: border-color 0.3s ease;
+  margin-bottom: 1.3rem;
+  background: var(--card, #ffffff);
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--primary-soft);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .input-group:focus-within {
-  border-color: #4CAF50;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }
 
 .input-group .icon {
   margin-right: 0.75rem;
-  font-size: 1.25rem;
-  color: #4CAF50;
+  font-size: 1.2rem;
+  color: var(--primary);
 }
 
 input[type="text"],
@@ -58,48 +88,75 @@ input[type="password"] {
   border: none;
   outline: none;
   flex: 1;
-  font-size: 1rem;
-  color: #333333;
-  background-color: transparent;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: transparent;
+  /* Add consistent font-family */
+  font-family: inherit;
 }
 
+/* ===== Login Button ===== */
 .login-btn {
   width: 100%;
-  background-color: #FF9800; /* Accent Orange */
+  background: linear-gradient(135deg, var(--accent), #ffb74d);
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.login-btn:hover {
-  background-color: #e68a00;
+.login-btn:hover,
+.login-btn:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(255, 152, 0, 0.35);
+  outline: none;
 }
 
-.register-text {
-  margin-top: 1.5rem;
+/* ===== Messages ===== */
+.error-message,
+.info-message {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
   font-size: 0.9rem;
-  color: #333333;
+}
+
+.error-message {
+  color: #e53935;
+}
+
+.info-message {
+  color: #2e7d32;
+}
+
+/* ===== Remember Me ===== */
+.remember-me {
+  margin: 12px 0;
+  font-size: 0.85rem;
+  color: #555555; /* consistent 6-digit hex */
+}
+
+/* ===== Register Link ===== */
+.register-text {
+  margin-top: 1.6rem;
+  font-size: 0.85rem;
+  color: var(--text);
   text-align: center;
 }
 
 .register-text a {
-  color: #4CAF50;
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
+  transition: text-decoration 0.25s ease;
 }
 
-.register-text a:hover {
+.register-text a:hover,
+.register-text a:focus {
   text-decoration: underline;
-}
-
-.error-message {
-  color: #FF9800;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: 600;
+  outline: none;
 }

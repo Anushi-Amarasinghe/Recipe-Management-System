@@ -12,11 +12,18 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
   },
   active: {
     type: Number,
@@ -25,6 +32,21 @@ const userSchema = new mongoose.Schema({
   created_date: {
     type: Date,
     default: Date.now
+  },
+  otp: {
+    type: String
+  },
+  otpExpires: {
+    type: Date
+  }
+});
+
+// Pre-save hook to ensure email is always lowercase and trimmed
+// Note: email field already has lowercase: true and trim: true in schema,
+// but keeping this hook for additional safety
+userSchema.pre("save", async function() {
+  if (this.email) {
+    this.email = this.email.toLowerCase().trim();
   }
 });
 

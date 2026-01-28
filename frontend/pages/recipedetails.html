@@ -1,0 +1,130 @@
+<!-- TOP BAR -->
+<div class="top-bar">
+  <h2>🍽️ Recipe Details</h2>
+  <a class="add-recipe" href="/dashboard.html" id="backBtn">
+    ← Back to Recipes
+  </a>
+</div>
+
+<!-- Page Inner Wrapper -->
+<div class="page-inner">
+
+  <!-- Main Layout: Left (Details) + Right (Meta/Author) -->
+  <div class="recipe-main-layout">
+
+    <!-- Left side: Recipe Details -->
+    <section class="recipe-details-card">
+      <form id="recipedetailsForm" class="form-grid">
+
+        <!-- Recipe Name -->
+        <div class="field">
+          <label for="title">Recipe Name</label>
+          <input class="readonly-field" id="title" value="---" readonly>
+        </div>
+
+        <!-- Category -->
+        <div class="field">
+          <label for="category">Category</label>
+          <input id="category" value="Uncategorized" readonly>
+        </div>
+
+        <!-- Likes / Dislikes -->
+        <div class="field">
+          <label>Interest</label>
+          <div class="likes-wrapper">
+
+            <!-- Like button -->
+            <button class="like-btn" id="likeBtn" type="button">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span id="likeCount">0</span>
+            </button>
+
+            <!-- Dislike button -->
+            <button class="dislike-btn" id="dislikeBtn" type="button">
+              <i class="fa-regular fa-thumbs-down"></i>
+              <span id="dislikeCount">0</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="field field-full">
+          <label>Recipe Image</label>
+          <div class="image-preview" id="imagePreview">
+            <img id="previewImg" alt="Recipe preview" src="" />
+            <span class="image-placeholder"></span>
+          </div>
+        </div>
+
+        <!-- Recipe Details -->
+        <div class="field field-full">
+          <label for="wishText">Recipe Details</label>
+          <textarea id="wishText" rows="6" readonly>---</textarea>
+        </div>
+
+        <!-- Favourites -->
+        <div class="field field-full fav-field">
+          <label>
+            <input type="checkbox" id="favourite" disabled>
+            Save to favourites
+          </label>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- Right side: Meta + Author -->
+    <aside class="recipe-meta-wrapper">
+
+      <!-- Prep / Cook / Serves -->
+      <div class="recipe-meta">
+        <div class="meta-item">
+          <span class="meta-label">Prep</span>
+          <span class="meta-value" id="prepTime"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Cook</span>
+          <span class="meta-value" id="cookTime"></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Serves</span>
+          <span class="meta-value" id="servesCount"></span>
+        </div>
+      </div>
+
+      <!-- Author -->
+      <div class="recipe-author">
+        <img src="images/chef.png" alt="Recipe Author" id="authorAvatar">
+        <div>         
+          <p class="author-role" id="authorRole">By </p>
+          <p class="author-name" id="authorName" aria-placeholder="N/A"></p>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <section class="comments-section">
+  <h3>Comments</h3>
+
+  <!-- Comments container -->
+    <div class="comments-list" id="commentsList">
+      <!-- Comments will be dynamically inserted here -->
+    </div>
+
+    <!-- Comment form -->
+    <form id="commentForm" class="comment-form">
+      <div class="comment-input-wrapper">
+        <img src="images/user-avatar.png" alt="Your avatar" class="comment-avatar">
+        <textarea id="commentInput" placeholder="Write your comment..." rows="2" required></textarea>
+      </div>
+      <div class="actions-bar">
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </div>
+    </form>
+  </section>
+
+
+</div>

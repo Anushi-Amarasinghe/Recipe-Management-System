@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login | Recipe Management System</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+
+<body>
+
+  <div class="login-wrapper admin-login-wrapper">
+    <div class="login-card admin-login-card">
+
+      <h2>Admin Portal 🔐</h2>
+      <p class="subtitle">Sign in to access admin dashboard</p>
+
+      <!-- Error message -->
+      <div class="error-message" id="error"></div>
+
+      <form id="adminLoginForm">
+
+        <div class="input-group">
+          <span class="icon">📧</span>
+          <input
+            type="email"
+            id="email"
+            placeholder="Admin Email Address"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔒</span>
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="remember-me">
+          <label>
+            <input type="checkbox" id="rememberEmail" />
+            Remember my email
+          </label>
+        </div>
+
+        <button type="submit" class="login-btn admin-login-btn">
+          Admin Login
+        </button>
+
+      </form>
+
+      <p class="register-text">
+        Regular user? <a href="login.html">User Login</a>
+      </p>
+
+    </div>
+  </div>
+
+  <style>
+    /* Admin-specific styling - Modern Professional Theme */
+    body {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #1e3c72 50%, #0f2027 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .admin-login-wrapper {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+    }
+
+    .admin-login-card {
+      background: transparent;
+    }
+
+    .admin-login-card h2 {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #f4a261 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-login-card .subtitle {
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    .admin-login-btn {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #f4a261 100%);
+      background-size: 200% 200%;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(30, 60, 114, 0.4);
+    }
+
+    .admin-login-btn:hover {
+      background-position: 100% 0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 60, 114, 0.5);
+    }
+
+    .admin-login-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(30, 60, 114, 0.3);
+    }
+
+    .admin-login-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .admin-login-card .input-group {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .admin-login-card .input-group:hover {
+      border-color: #cbd5e0;
+      background: #ffffff;
+    }
+
+    .admin-login-card .input-group:focus-within {
+      border-color: #2a5298;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .admin-login-card .input-group input {
+      color: #2d3748;
+    }
+
+    .admin-login-card .input-group input::placeholder {
+      color: #a0aec0;
+    }
+
+    .admin-login-card .icon {
+      color: #2a5298;
+      font-size: 1.3rem;
+    }
+
+    .admin-login-card .remember-me {
+      color: #4a5568;
+    }
+
+    .admin-login-card .remember-me input[type="checkbox"] {
+      accent-color: #2a5298;
+    }
+
+    .admin-login-card .register-text {
+      color: #4a5568;
+    }
+
+    .admin-login-card .register-text a {
+      color: #2a5298;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .admin-login-card .register-text a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(135deg, #2a5298 0%, #f4a261 100%);
+      transition: width 0.3s ease;
+    }
+
+    .admin-login-card .register-text a:hover {
+      color: #1e3c72;
+    }
+
+    .admin-login-card .register-text a:hover::after {
+      width: 100%;
+    }
+
+    .error-message {
+      display: none; /* Hidden by default, shown only when there's an error */
+      color: #c53030;
+      background: linear-gradient(135deg, rgba(197, 48, 48, 0.1) 0%, rgba(197, 48, 48, 0.05) 100%);
+      padding: 0.875rem 1rem;
+      border-radius: 10px;
+      border: 2px solid rgba(197, 48, 48, 0.2);
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(197, 48, 48, 0.1);
+      margin-bottom: 1rem;
+    }
+
+    /* Add subtle animation to the card */
+    .admin-login-card {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <script>
+    const form = document.getElementById('adminLoginForm');
+    const errorDiv = document.getElementById('error');
+    const emailInput = document.getElementById('email');
+    const rememberCheckbox = document.getElementById('rememberEmail');
+
+    // Load remembered email on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedEmail = localStorage.getItem('adminRememberedEmail');
+      if (savedEmail) {
+        emailInput.value = savedEmail;
+        rememberCheckbox.checked = true;
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = document.getElementById('password').value;
+
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      // Show loading state
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.textContent = 'Logging in...';
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorDiv.textContent = data.error?.message || data.message || 'Login failed. Please check your credentials.';
+          errorDiv.style.display = 'block';
+          submitBtn.textContent = originalBtnText;
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // Remember email logic
+        if (rememberCheckbox.checked) {
+          localStorage.setItem('adminRememberedEmail', email);
+        } else {
+          localStorage.removeItem('adminRememberedEmail');
+        }
+
+        // Save JWT token
+        localStorage.setItem('token', data.token);
+
+        // Redirect to dashboard (user is guaranteed to be admin if login succeeded)
+        window.location.href = 'dashboard.html';
+
+      } catch (err) {
+        console.error(err);
+        errorDiv.textContent = 'Network error. Please check your connection and try again.';
+        errorDiv.style.display = 'block';
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
+
