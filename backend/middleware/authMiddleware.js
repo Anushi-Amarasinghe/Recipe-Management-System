@@ -2,41 +2,23 @@
 const jwt = require("jsonwebtoken");
 const { sendError, ErrorCodes } = require("../utils/errorHandler");
 
-<<<<<<< HEAD
-function auth(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Not authorized" });
-=======
-module.exports = function authMiddleware(req, res, next) {
-  const header = req.headers.authorization || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : null;
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization || "";
 
-  if (!token) {
+  if (!authHeader.startsWith("Bearer ")) {
     return sendError(
       res,
       401,
       ErrorCodes.UNAUTHORIZED,
       "Not authorized - No token provided"
     );
->>>>>>> main
   }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-<<<<<<< HEAD
-    
-    req.user = decoded.id;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Not authorized" });
-  }
-}
-=======
->>>>>>> main
 
-
-    req.user = decoded;
     req.userId = decoded.id;
     req.userRole = decoded.role;
 
@@ -50,3 +32,5 @@ module.exports = function authMiddleware(req, res, next) {
     );
   }
 };
+
+module.exports = authMiddleware;

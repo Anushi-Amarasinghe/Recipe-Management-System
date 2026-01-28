@@ -1,81 +1,114 @@
 const mongoose = require("mongoose");
 
-const instructionSchema = new mongoose.Schema(
-  {
-    stepNumber: {
-      type: Number,
-      required: true
-    },
-    text: {
-      type: String,
-      required: true
-    }
-  },
-  { _id: false }
-);
-
 const recipeSchema = new mongoose.Schema(
   {
-<<<<<<< HEAD
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
     title: {
       type: String,
       required: true,
       trim: true
     },
+
+    desc: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    category: {
+      type: String,
+      default: "Dinner"
+    },
+
+    rating: {
+      type: Number,
+      default: 0
+    },
+
+    imageUrl: {
+      type: String,
+      default: ""
+    },
+
     ingredients: {
       type: [String],
-      required: true,
-      validate: v => v.length > 0
+      default: []
     },
-    instructions: {
-      type: [instructionSchema],
-      required: true,
-      validate: v => v.length > 0
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    }
-=======
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
-    title: { type: String, required: true, trim: true },
-    desc: { type: String, required: true, trim: true },
-    category: { type: String, default: "Dinner" },
-    rating: { type: Number, default: 0 },
-    imageUrl: { type: String, default: "" },
-    
-    // New fields
-    ingredients: { type: [String], default: [] },
-    instructions: { type: [String], default: [] },
-    difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], default: "Medium" },
-    dietary: { type: [String], default: [] },
-    tags: { type: [String], default: [] },
-    notes: { type: String, trim: true, default: "" },
-    cookingTime: { type: Number, default: 0 },
-    prepTime: { type: Number, default: 0 },
-    servings: { type: Number, default: 0 },
->>>>>>> main
+    instructions: {
+      type: [String],
+      default: []
+    },
+
+    difficulty: {
+      type: String,
+      enum: ["Easy", "Medium", "Hard"],
+      default: "Medium"
+    },
+
+    dietary: {
+      type: [String],
+      default: []
+    },
+
+    tags: {
+      type: [String],
+      default: []
+    },
+
+    notes: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
+    cookingTime: {
+      type: Number,
+      default: 0
+    },
+
+    prepTime: {
+      type: Number,
+      default: 0
+    },
+
+    servings: {
+      type: Number,
+      default: 0
+    }
   },
   { timestamps: true }
 );
 
-// Pre-save hook to ensure data consistency
-// Using async/await pattern for better compatibility with Mongoose 9.x
-recipeSchema.pre("save", async function () {
-  // Trim and filter empty strings from arrays
-  if (this.ingredients && Array.isArray(this.ingredients)) {
-    this.ingredients = this.ingredients.map(i => String(i).trim()).filter(i => i.length > 0);
+// Pre-save hook for cleanup
+recipeSchema.pre("save", function () {
+  if (Array.isArray(this.ingredients)) {
+    this.ingredients = this.ingredients
+      .map(i => String(i).trim())
+      .filter(Boolean);
   }
-  if (this.instructions && Array.isArray(this.instructions)) {
-    this.instructions = this.instructions.map(i => String(i).trim()).filter(i => i.length > 0);
+
+  if (Array.isArray(this.instructions)) {
+    this.instructions = this.instructions
+      .map(i => String(i).trim())
+      .filter(Boolean);
   }
-  if (this.dietary && Array.isArray(this.dietary)) {
-    this.dietary = this.dietary.map(d => String(d).trim()).filter(d => d.length > 0);
+
+  if (Array.isArray(this.dietary)) {
+    this.dietary = this.dietary
+      .map(d => String(d).trim())
+      .filter(Boolean);
   }
-  if (this.tags && Array.isArray(this.tags)) {
-    this.tags = this.tags.map(t => String(t).trim().toLowerCase()).filter(t => t.length > 0);
+
+  if (Array.isArray(this.tags)) {
+    this.tags = this.tags
+      .map(t => String(t).trim().toLowerCase())
+      .filter(Boolean);
   }
 });
 

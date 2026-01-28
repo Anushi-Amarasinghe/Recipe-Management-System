@@ -1,35 +1,6 @@
-<<<<<<< HEAD
 // frontend/js/dashboard.js
 
 console.log("dashboard.js loaded");
-
-const mainContent = document.getElementById("mainContent");
-
-
-async function loadPage(page, activeBtnId) {
-  try {
-    const res = await fetch(`pages/${page}`);
-    if (!res.ok) throw new Error("Page not found");
-
-    mainContent.innerHTML = await res.text();
-
-    
-    document
-      .querySelectorAll(".sidebar button:not(.logout)")
-      .forEach(btn => btn.classList.remove("active"));
-
-    const activeBtn = document.getElementById(activeBtnId);
-    if (activeBtn) activeBtn.classList.add("active");
-
-    
-    if (page === "recipes.html") {
-      import("./recipes.js");
-    }
-
-    if (page === "my-recipes.html") {
-      import("./myRecipes.js");
-=======
-// dashboard.js
 
 /* ===========================
    Main content reference
@@ -37,7 +8,7 @@ async function loadPage(page, activeBtnId) {
 const mainContent = document.getElementById("mainContent");
 
 /* ===========================
-   Utility functions
+   Utility helpers
 =========================== */
 function escapeHtml(str) {
   return String(str || "")
@@ -56,24 +27,32 @@ function renderStars(rating) {
 /* ===========================
    Page loader
 =========================== */
-async function loadPage(page, btnId) {
+async function loadPage(page, activeBtnId) {
   try {
     const res = await fetch(`pages/${page}`);
-    if (!res.ok) throw new Error(`Failed to load pages/${page}`);
+    if (!res.ok) throw new Error(`Failed to load ${page}`);
 
     const html = await res.text();
-
-    // Inject HTML first
     mainContent.innerHTML = html;
 
-    // ⚡ Call page-specific initializers AFTER HTML is injected
-    if (page === "my-recipes.html" && window.loadMyRecipes) {
-      await window.loadMyRecipes();
+    // Sidebar active state
+    document
+      .querySelectorAll(".sidebar button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (activeBtnId) {
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add("active");
     }
 
-    if (page === "recipes.html") {
-      if (window.loadAllRecipes) await window.loadAllRecipes();
+    // Page-specific initialisers
+    if (page === "recipes.html" && window.loadAllRecipes) {
+      await window.loadAllRecipes();
       if (window.initRecipeFilters) window.initRecipeFilters();
+    }
+
+    if (page === "my-recipes.html" && window.loadMyRecipes) {
+      await window.loadMyRecipes();
     }
 
     if (page === "settings.html" && window.loadSettings) {
@@ -84,76 +63,14 @@ async function loadPage(page, btnId) {
       await window.loadRecipeDetails();
     }
 
-    // Set active sidebar button
-    if (btnId) {
-      document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
-      const activeBtn = document.getElementById(btnId);
-      if (activeBtn) activeBtn.classList.add("active");
->>>>>>> main
-    }
-
   } catch (err) {
     console.error(err);
-<<<<<<< HEAD
     mainContent.innerHTML = "<p>Error loading page.</p>";
   }
 }
 
-
-document.getElementById("RecipesBtn").addEventListener("click", (e) => {
-  e.preventDefault();            
-  loadPage("recipes.html", "RecipesBtn");
-});
-
-document.getElementById("myRecipesBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  loadPage("my-recipes.html", "myRecipesBtn");
-});
-
-document.getElementById("favouritesBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  mainContent.innerHTML = "<h2>Favourites (Coming Soon)</h2>";
-});
-
-document.getElementById("mealPlannerBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  mainContent.innerHTML = "<h2>Meal Planner (Coming Soon)</h2>";
-});
-
-document.getElementById("settingsBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  mainContent.innerHTML = "<h2>Settings (Coming Soon)</h2>";
-});
-
-
-async function showUsername() {
-  try {
-    const res = await fetch("/api/auth/me", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token")
-      }
-    });
-
-    if (!res.ok) throw new Error("Unauthorized");
-
-    const user = await res.json();
-    document.getElementById("usernameDisplay").textContent =
-      user.f_name + " " + user.l_name;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-showUsername();
-loadPage("recipes.html", "RecipesBtn");
-=======
-    mainContent.innerHTML = "<p>Error loading page</p>";
-  }
-}
-
 /* ===========================
-   Sidebar buttons
+   Sidebar navigation
 =========================== */
 const sidebarMap = {
   RecipesBtn: "recipes.html",
@@ -164,42 +81,48 @@ const sidebarMap = {
 };
 
 for (const [btnId, page] of Object.entries(sidebarMap)) {
-  document.getElementById(btnId)?.addEventListener("click", () => loadPage(page, btnId));
+  const btn = document.getElementById(btnId);
+  if (!btn) continue;
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    loadPage(page, btnId);
+  });
 }
 
 /* ===========================
-   Dynamic buttons inside loaded pages
+   Delegated actions
 =========================== */
 mainContent.addEventListener("click", async (e) => {
 
-  // OPEN button -> Load recipe details
+  // OPEN recipe
   const openBtn = e.target.closest(".open-btn");
   if (openBtn) {
     const recipeId = openBtn.dataset.id;
     if (!recipeId) return;
 
-    // Store recipe ID in sessionStorage
     sessionStorage.setItem("viewRecipeId", recipeId);
-
-    // Load recipe details page
     loadPage("recipedetails.html");
     return;
   }
 
-  // EDIT button
+  // EDIT recipe
   const editBtn = e.target.closest(".edit-btn");
   if (editBtn) {
     const recipeId = editBtn.dataset.id;
     if (!recipeId) return;
-    window.location.href = `/pages/view-edit-recipe.html?id=${encodeURIComponent(recipeId)}`;
+
+    window.location.href =
+      `/pages/view-edit-recipe.html?id=${encodeURIComponent(recipeId)}`;
     return;
   }
 
-  // DELETE button
+  // DELETE recipe
   const deleteBtn = e.target.closest(".delete-btn");
   if (deleteBtn && window.deleteRecipeById && window.loadMyRecipes) {
     const recipeId = deleteBtn.dataset.id;
     if (!recipeId) return;
+
     if (!confirm("Delete this recipe?")) return;
 
     try {
@@ -209,156 +132,39 @@ mainContent.addEventListener("click", async (e) => {
       alert(err.message || "Failed to delete recipe");
     }
   }
-
 });
 
 /* ===========================
-   Default page load
+   Show logged-in username
+=========================== */
+async function showUsername() {
+  try {
+    const res = await fetch("/api/auth/me", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+
+    if (!res.ok) throw new Error("Unauthorized");
+
+    const user = await res.json();
+    const el = document.getElementById("usernameDisplay");
+    if (el) el.textContent = `${user.f_name} ${user.l_name}`;
+  } catch (err) {
+    console.error("Failed to load username:", err);
+  }
+}
+
+/* ===========================
+   Initial load
 =========================== */
 document.addEventListener("DOMContentLoaded", () => {
+  showUsername();
   loadPage("recipes.html", "RecipesBtn");
 });
 
 /* ===========================
-   My Recipes Page
-async function loadMyRecipes() {
-  const grid = document.getElementById("recipesGrid");
-  if (!grid) return;
-
-  grid.innerHTML = "<p>Loading recipes...</p>";
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    grid.innerHTML = "<p>Please log in to view your recipes.</p>";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/recipes/mine", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || "Failed to fetch recipes");
-
-    const recipes = Array.isArray(data.recipes) ? data.recipes : [];
-    if (recipes.length === 0) {
-      grid.innerHTML = "<p>No recipes saved yet.</p>";
-      return;
-    }
-
-    grid.innerHTML = recipes
-      .map(r => `
-        <div class="recipe-card" 
-          data-likes="${r.likes || 0}" 
-          data-dislikes="${r.dislikes || 0}" 
-          data-category="${r.category}" 
-          data-region="${r.region}" 
-          data-date="${r.createdAt}">
-
-          <div class="image-placeholder">
-            ${r.imageUrl ? `<img src="${r.imageUrl}" alt="${r.title}" />` : "[IMAGE]"}
-          </div>
-
-          <div class="content">
-            <div class="title-wrapper">
-              <div class="title">${r.title}</div>
-            </div>
-
-            <div class="likes-wrapper">
-              <i class="fa-regular fa-thumbs-up"></i>
-              <i class="fa-regular fa-thumbs-down"></i>
-            </div>
-
-            <div class="actions">
-              <button class="open-btn" data-id="${r._id}">Open</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-
-  } catch (err) {
-    console.error(err);
-    grid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
-  }
-}
-
-/* ===========================
-   All Recipes Page
+   Expose helpers (used by other scripts)
 =========================== */
-async function loadAllRecipes() {
-  const grid = document.getElementById("recipesGridA");
-  if (!grid) return;
-
-  grid.innerHTML = "<p>Loading recipes...</p>";
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    grid.innerHTML = "<p>Please log in to view your recipes.</p>";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/recipes/", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || "Failed to fetch recipes");
-
-    const recipes = Array.isArray(data.recipes) ? data.recipes : [];
-    if (recipes.length === 0) {
-      grid.innerHTML = "<p>No recipes saved yet.</p>";
-      return;
-    }
-
-    grid.innerHTML = recipes
-      .map(r => `
-        <div class="recipe-card" 
-          data-likes="${r.likes || 0}" 
-          data-dislikes="${r.dislikes || 0}" 
-          data-category="${r.category}" 
-          data-region="${r.region}" 
-          data-date="${r.createdAt}">
-
-          <div class="image-placeholder">
-            ${r.imageUrl ? `<img src="${r.imageUrl}" alt="${r.title}" />` : "[IMAGE]"}
-          </div>
-
-          <div class="content">
-            <div class="title-wrapper">
-              <div class="title">${r.title}</div>
-            </div>
-
-            <div class="likes-wrapper">
-              <div class="like-display">
-                <i class="fa-regular fa-thumbs-up"></i>
-                <span>${r.is_like || 0}</span>
-              </div>
-              <div class="dislike-display">
-                <i class="fa-regular fa-thumbs-down"></i>
-                <span>${r.is_dislike || 0}</span>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="open-btn" data-id="${r._id}">Open</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-
-  } catch (err) {
-    console.error(err);
-    grid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
-  }
-}
-
-/* ===========================
-   Expose globally
-=========================== */
-window.loadMyRecipes = loadMyRecipes;
-window.loadAllRecipes = loadAllRecipes;
 window.escapeHtml = escapeHtml;
 window.renderStars = renderStars;
->>>>>>> main
