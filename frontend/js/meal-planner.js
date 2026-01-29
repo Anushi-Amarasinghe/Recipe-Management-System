@@ -1,7 +1,7 @@
 (function () {
 
   const plannerRoot = document.querySelector(".meal-planner-container");
-  if (!plannerRoot) return; // SPA guard
+  if (!plannerRoot) return; 
 
   const modal = document.getElementById("mealModal");
   const recipeSelect = document.getElementById("recipeSelect");
@@ -9,10 +9,10 @@
 
   let activeSlot = null;
 
-  // ---------- GLOBAL CLICK HANDLER (SPA-SAFE) ----------
+  // ---------- GLOBAL CLICK HANDLER ----------
   document.addEventListener("click", async (e) => {
 
-    /* ========= OPEN MODAL ========= */
+    
     const addBtn = e.target.closest(".add-meal-btn");
     if (addBtn) {
       activeSlot = addBtn.closest(".meal-slot");
@@ -35,7 +35,7 @@
       return;
     }
 
-    /* ========= SAVE MEAL (DB + UI) ========= */
+    
     if (e.target.id === "saveMeal") {
       if (!activeSlot || !recipeSelect.value) return;
 
@@ -74,7 +74,7 @@
       return;
     }
 
-    /* ========= REMOVE MEAL ========= */
+   
     const removeBtn = e.target.closest(".remove-meal-btn");
     if (removeBtn) {
       const slot = removeBtn.closest(".meal-slot");
@@ -103,7 +103,7 @@
 
   });
 
-  // ---------- LOAD RECIPES FOR MODAL ----------
+  
   async function loadRecipes() {
     recipeSelect.innerHTML = `<option value="">Loading...</option>`;
 

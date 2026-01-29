@@ -1,6 +1,6 @@
 // all-recipes.js
 
-let allRecipes = []; // store fetched recipes
+let allRecipes = []; 
 
 /* ===========================
    Utility function: render stars

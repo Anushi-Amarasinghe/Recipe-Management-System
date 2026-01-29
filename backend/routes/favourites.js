@@ -12,7 +12,7 @@ router.post("/:recipeId", auth, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Ensure favourites array exists
+    
     if (!Array.isArray(user.favourites)) {
       user.favourites = [];
     }
