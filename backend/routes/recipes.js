@@ -45,10 +45,11 @@ router.post("/", auth, userOrAdmin, upload.single("image"), async (req, res) => 
       return res.status(400).json({ message: "Recipe description is required." });
     }
 
-    // Check for duplicate recipe title (case-insensitive) - check user's own recipes
+    // Check for duplicate recipe title (case-insensitive) - check user's own active recipes
     const normalizedTitle = String(title).trim().toLowerCase();
     const existingRecipe = await Recipe.findOne({
       userId: req.userId,
+      deletedAt: null,
       title: { $regex: new RegExp(`^${normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") }
     });
 
@@ -193,10 +194,10 @@ router.post("/", auth, userOrAdmin, upload.single("image"), async (req, res) => 
   }
 });
 
-// GET /api/recipes (public all list)
+// GET /api/recipes (public all list) - exclude soft-deleted (trash)
 router.get("/", async (req, res) => {
   try {
-    const recipes = await Recipe.find().sort({ createdAt: -1 });
+    const recipes = await Recipe.find({ deletedAt: null }).sort({ createdAt: -1 });
     return res.json({ recipes });
   } catch (err) {
     console.error("List recipes error:", err);
@@ -208,10 +209,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /api/recipes/mine (current user's recipes) - protected + role-based access
+// GET /api/recipes/mine (current user's recipes) - protected + role-based access; exclude trash
 router.get("/mine", auth, userOrAdmin, async (req, res) => {
   try {
-    const recipes = await Recipe.find({ userId: req.userId }).sort({ createdAt: -1 });
+    const recipes = await Recipe.find({ userId: req.userId, deletedAt: null }).sort({ createdAt: -1 });
     return res.json({ recipes });
   } catch (err) {
     console.error("Mine recipes error:", err);
@@ -223,11 +224,156 @@ router.get("/mine", auth, userOrAdmin, async (req, res) => {
   }
 });
 
+// POST /api/recipes/bulk-delete - soft-delete multiple recipes. Owner-only (user: own recipes; admin: any).
+router.post("/bulk-delete", auth, userOrAdmin, async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: "Body must include an array of recipe ids: { ids: [...] }" });
+    }
+
+    const isAdmin = req.userRole === "admin";
+    const deletedIds = [];
+    const now = new Date();
+
+    for (const id of ids) {
+      if (!id) continue;
+      const recipe = await Recipe.findById(id);
+      if (!recipe) continue;
+      const isOwner = String(recipe.userId) === String(req.userId);
+      if (!isOwner && !isAdmin) continue;
+
+      if (recipe.deletedAt) continue; // already soft-deleted
+      recipe.deletedAt = now;
+      await recipe.save();
+      deletedIds.push(recipe._id);
+
+      try {
+        let userIdObj = mongoose.Types.ObjectId.isValid(req.userId) ? new mongoose.Types.ObjectId(req.userId) : req.userId;
+        const user = await User.findById(userIdObj);
+        if (user) {
+          const userName = `${user.f_name} ${user.l_name}`.trim();
+          await Activity.create({
+            userId: userIdObj,
+            userName,
+            action: "deleted",
+            recipeId: recipe._id,
+            recipeTitle: String(recipe.title).trim(),
+          });
+          emitActivity({
+            userName,
+            action: "deleted",
+            recipeTitle: String(recipe.title).trim(),
+            createdAt: now,
+          });
+        }
+      } catch (activityErr) {
+        console.error("Bulk-delete activity log error:", activityErr);
+      }
+    }
+
+    return res.json({
+      message: "Bulk delete completed",
+      deleted: deletedIds.length,
+      deletedIds: deletedIds.map((id) => id.toString()),
+    });
+  } catch (err) {
+    console.error("Bulk delete error:", err);
+    return res.status(500).json({
+      message: "Server error during bulk delete",
+      error: err?.message,
+      name: err?.name,
+    });
+  }
+});
+
+// POST /api/recipes/bulk-restore - restore multiple recipes from trash. Owner-only (user: own; admin: any).
+router.post("/bulk-restore", auth, userOrAdmin, async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: "Body must include an array of recipe ids: { ids: [...] }" });
+    }
+
+    const isAdmin = req.userRole === "admin";
+    const restoredIds = [];
+
+    for (const id of ids) {
+      if (!id) continue;
+      const recipe = await Recipe.findById(id);
+      if (!recipe) continue;
+      const isOwner = String(recipe.userId) === String(req.userId);
+      if (!isOwner && !isAdmin) continue;
+      if (!recipe.deletedAt) continue; // not in trash
+
+      recipe.deletedAt = null;
+      await recipe.save();
+      restoredIds.push(recipe._id);
+    }
+
+    return res.json({
+      message: "Bulk restore completed",
+      restored: restoredIds.length,
+      restoredIds: restoredIds.map((id) => id.toString()),
+    });
+  } catch (err) {
+    console.error("Bulk restore error:", err);
+    return res.status(500).json({
+      message: "Server error during bulk restore",
+      error: err?.message,
+      name: err?.name,
+    });
+  }
+});
+
+// GET /api/recipes/trash - list soft-deleted recipes. Owner sees own; admin sees all.
+router.get("/trash", auth, userOrAdmin, async (req, res) => {
+  try {
+    const filter = req.userRole === "admin"
+      ? { deletedAt: { $ne: null } }
+      : { userId: req.userId, deletedAt: { $ne: null } };
+    const recipes = await Recipe.find(filter).sort({ deletedAt: -1 });
+    return res.json({ recipes });
+  } catch (err) {
+    console.error("Trash list error:", err);
+    return res.status(500).json({
+      message: "Server error fetching trash",
+      error: err?.message,
+      name: err?.name,
+    });
+  }
+});
+
+// POST /api/recipes/:id/restore - restore one recipe from trash (owner or admin)
+router.post("/:id/restore", auth, userOrAdmin, async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (!recipe.deletedAt) return res.status(400).json({ message: "Recipe is not in trash" });
+
+    const isOwner = String(recipe.userId) === String(req.userId);
+    const isAdmin = req.userRole === "admin";
+    if (!isOwner && !isAdmin) return res.status(403).json({ message: "Not allowed" });
+
+    recipe.deletedAt = null;
+    await recipe.save();
+    return res.json({ message: "Recipe restored", recipe });
+  } catch (err) {
+    console.error("Restore recipe error:", err);
+    return res.status(500).json({
+      message: "Server error restoring recipe",
+      error: err?.message,
+      name: err?.name,
+    });
+  }
+});
+
 // GET /api/recipes/:id - get single recipe by ID (owner only)
 router.get("/:id", auth, async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (recipe.deletedAt) return res.status(404).json({ message: "Recipe not found" });
 
     if (String(recipe.userId) !== String(req.userId)) {
       return res.status(403).json({ message: "Not allowed" });
@@ -249,6 +395,7 @@ router.put("/:id", auth, userOrAdmin, upload.single("image"), async (req, res) =
   try {
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+    if (recipe.deletedAt) return res.status(404).json({ message: "Recipe not found" });
 
     if (String(recipe.userId) !== String(req.userId)) {
       return res.status(403).json({ message: "Not allowed" });
@@ -263,11 +410,12 @@ router.put("/:id", auth, userOrAdmin, upload.single("image"), async (req, res) =
       return res.status(400).json({ message: "Recipe description is required." });
     }
 
-    // Duplicate check: same user, same normalized title, exclude current recipe
+    // Duplicate check: same user, same normalized title, exclude current recipe and trash
     const normalizedTitle = title.toLowerCase();
     const existingRecipe = await Recipe.findOne({
       userId: req.userId,
       _id: { $ne: recipe._id },
+      deletedAt: null,
       title: { $regex: new RegExp(`^${normalizedTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") },
     });
     if (existingRecipe) {
@@ -449,7 +597,7 @@ router.delete("/:id", auth, userOrAdmin, async (req, res) => {
  */
 router.get("/admin/all", auth, adminOnly, async (req, res) => {
   try {
-    const recipes = await Recipe.find().sort({ createdAt: -1 });
+    const recipes = await Recipe.find({ deletedAt: null }).sort({ createdAt: -1 });
     return res.json({ recipes, count: recipes.length });
   } catch (err) {
     console.error("Admin get all recipes error:", err);

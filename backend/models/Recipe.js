@@ -20,6 +20,9 @@ const recipeSchema = new mongoose.Schema(
     cookingTime: { type: Number, default: 0 },
     prepTime: { type: Number, default: 0 },
     servings: { type: Number, default: 0 },
+
+    // Soft delete / trash: set when recipe is deleted (bulk or single soft-delete)
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
