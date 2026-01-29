@@ -1,4 +1,8 @@
 
+let selectedDifficulty = "";
+let selectedDiet = "";
+
+
 function stars(rating = 0) {
   const r = Math.max(0, Math.min(5, Number(rating) || 0));
   return "★★★★★☆☆☆☆☆".slice(5 - r, 10 - r);
@@ -14,6 +18,7 @@ function escapeHtml(str = "") {
 }
 
 async function renderMyRecipes() {
+  
   const grid = document.getElementById("recipesGrid");
   if (!grid) return;
 
@@ -40,13 +45,35 @@ async function renderMyRecipes() {
     }
 
     const recipes = data.recipes || [];
+    let filteredRecipes = recipes;
 
-    if (!recipes.length) {
-      grid.innerHTML = "<p>No recipes yet. Click "Add New Recipe".</p>";
+    // Difficulty filter
+    if (selectedDifficulty) {
+      filteredRecipes = filteredRecipes.filter(
+        r => (r.difficulty || "").toLowerCase() === selectedDifficulty
+      );
+    }
+
+    // Dietary filter
+    if (selectedDiet) {
+      filteredRecipes = filteredRecipes.filter(
+        r => Array.isArray(r.dietary) &&
+            r.dietary.map(d => d.toLowerCase()).includes(selectedDiet)
+      );
+    }
+
+    if (!filteredRecipes.length) {
+      grid.innerHTML = "<p>No recipes match the selected filters.</p>";
       return;
     }
 
-    grid.innerHTML = recipes
+
+    if (!recipes.length) {
+      grid.innerHTML = "<p>No recipes yet. Click \"Add New Recipe\".</p>";
+      return;
+    }
+
+    grid.innerHTML = filteredRecipes
       .map(
         (r) => `
         <div class="recipe-card">
@@ -77,6 +104,8 @@ async function renderMyRecipes() {
     console.error(err);
     grid.innerHTML = "<p>Error loading recipes.</p>";
   }
+
+
 }
 
 async function deleteRecipeById(id) {
@@ -96,6 +125,36 @@ async function deleteRecipeById(id) {
   if (!res.ok) throw new Error(data.message || "Failed to delete recipe");
   return data;
 }
+
+
+document.addEventListener("click", (e) => {
+
+  // Difficulty buttons
+  const diffBtn = e.target.closest("#difficultyFilter button");
+  if (diffBtn) {
+    document
+      .querySelectorAll("#difficultyFilter button")
+      .forEach(b => b.classList.remove("active"));
+
+    diffBtn.classList.add("active");
+    selectedDifficulty = diffBtn.dataset.value;
+    renderMyRecipes();
+  }
+
+  // Dietary buttons
+  const dietBtn = e.target.closest("#dietFilter button");
+  if (dietBtn) {
+    document
+      .querySelectorAll("#dietFilter button")
+      .forEach(b => b.classList.remove("active"));
+
+    dietBtn.classList.add("active");
+    selectedDiet = dietBtn.dataset.value;
+    renderMyRecipes();
+  }
+
+});
+
 
 window.renderMyRecipes = renderMyRecipes;
 window.loadMyRecipes = renderMyRecipes; // Alias for compatibility with dashboard.js

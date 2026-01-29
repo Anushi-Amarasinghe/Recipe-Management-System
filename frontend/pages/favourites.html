@@ -1,0 +1,80 @@
+<div class="top-bar">
+  <h2>Favourites</h2>
+</div>
+
+<div class="recipes-grid" id="favouritesGrid">
+  <p>Loading favourites…</p>
+</div>
+
+<script>
+(async function loadFavourites() {
+  const grid = document.getElementById("favouritesGrid");
+  if (!grid) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    grid.innerHTML = "<p>Please log in to view favourites.</p>";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/recipes/favourites", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to load favourites");
+
+    const recipes = data.recipes || [];
+    if (recipes.length === 0) {
+      grid.innerHTML = "<p>No favourite recipes yet.</p>";
+      return;
+    }
+
+    grid.innerHTML = recipes.map(r => `
+      <div class="recipe-card">
+
+        <div class="image-placeholder">
+          ${r.imageUrl ? `<img src="${r.imageUrl}" alt="${r.title}" />` : "[IMAGE]"}
+        </div>
+
+        <div class="content">
+          <div class="title-wrapper">
+            <div class="title">${r.title}</div>
+
+            <button 
+              class="favourites-btn" 
+              data-id="${r._id}" 
+              aria-label="Remove from favourites"
+            >
+              <i class="fa-solid fa-heart"></i>
+            </button>
+          </div>
+
+          <div class="likes-wrapper">
+            <div class="like-display">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span>${r.is_like || 0}</span>
+            </div>
+            <div class="dislike-display">
+              <i class="fa-regular fa-thumbs-down"></i>
+              <span>${r.is_dislike || 0}</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="open-btn" data-id="${r._id}">Open</button>
+          </div>
+        </div>
+
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = "<p>Failed to load favourites.</p>";
+  }
+})();
+</script>
