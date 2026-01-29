@@ -30,6 +30,19 @@ const upload = multer({
   },
 });
 
+router.get("/favourites", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const recipes = await Recipe.find({
+      _id: { $in: user.favourites }
+    });
+
+    res.json({ recipes });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load favourites" });
+  }
+});
+
 // POST /api/recipes (create) - protected + role-based access + optional image upload
 router.post("/", auth, userOrAdmin, upload.single("image"), async (req, res) => {
   try {
@@ -525,5 +538,7 @@ router.delete("/admin/:id", auth, adminOnly, async (req, res) => {
     });
   }
 });
+
+
 
 module.exports = router;
