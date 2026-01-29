@@ -130,8 +130,10 @@
         
         // Redirect based on role
         if (userData.role === 'admin') {
-          window.location.href = 'pages/admin-users.html';
+          // Admin users go to Analytics Dashboard (HD Feature)
+          window.location.href = 'pages/analytics-dashboard.html';
         } else {
+          // Regular users go to normal dashboard
           window.location.href = 'dashboard.html';
         }
       } else {

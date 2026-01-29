@@ -38,6 +38,22 @@ function sendError(res, statusCode, code, message, details = null) {
 }
 
 /**
+ * Send standardized success response
+ * @param {object} res - Express response object
+ * @param {number} statusCode - HTTP status code
+ * @param {string} message - Success message
+ * @param {object|null} data - Optional response data
+ */
+function sendSuccess(res, statusCode, message, data = null) {
+  const response = { success: true, message };
+  if (data !== null) {
+    response.data = data;
+  }
+  return res.status(statusCode).json(response);
+}
+
+
+/**
  * Common error codes
  */
 const ErrorCodes = {
@@ -54,6 +70,7 @@ const ErrorCodes = {
 module.exports = {
   createErrorResponse,
   sendError,
+  sendSuccess,
   ErrorCodes
 };
 

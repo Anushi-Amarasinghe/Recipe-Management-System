@@ -7,14 +7,17 @@ const { sendError, sendSuccess, ErrorCodes } = require("../utils/errorHandler");
  */
 async function getAllCategories(req, res) {
   try {
-    const { 
-      page = 1, 
-      limit = 20, 
-      search = "",
-      status = "all",
-      sortBy = "name", 
-      sortOrder = "asc"
+       // Extract query parameters with defaults
+      const { 
+      page = 1,           // Default: first page
+      limit = 20,         // Default: 20 items per page
+      search = "",        // Default: no search filter
+      status = "all",     // Default: all statuses
+      sortBy = "name",    // Default: sort by name
+      sortOrder = "asc"   // Default: ascending order
     } = req.query;
+
+    // Build MongoDB query object
 
     const query = {};
 
@@ -33,9 +36,13 @@ async function getAllCategories(req, res) {
       query.isActive = false;
     }
 
+    // Calculate skip value for pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Build sort object
     const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
 
+    // Execute both queries in parallel for performance
     const [categories, total] = await Promise.all([
       Category.find(query)
         .populate("createdBy", "f_name l_name")
@@ -43,7 +50,7 @@ async function getAllCategories(req, res) {
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit)),
-      Category.countDocuments(query)
+      Category.countDocuments(query)  // Total count
     ]);
 
     return res.json({

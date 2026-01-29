@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Dashboard | Recipe Management System</title>
+  
+  <link rel="stylesheet" href="../css/analytics-dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="../images/rms_logo.png" alt="RMS Logo" class="sidebar-logo" onerror="this.style.display='none'" />
+      <h2>Admin Panel</h2>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active">
+        <i class="fas fa-chart-bar"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="admin-users.html" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span>Manage Users</span>
+      </a>
+      <a href="admin-categories.html" class="nav-item">
+        <i class="fas fa-folder"></i>
+        <span>Manage Categories</span>
+      </a>
+      <a href="admin-recipes.html" class="nav-item">
+        <i class="fas fa-book-open"></i>
+        <span>Manage Recipes</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <i class="fas fa-user-shield"></i>
+        <span id="adminName">Admin</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="main-header">
+      <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="header-title">
+        <h1>Analytics Dashboard</h1>
+        <p class="header-subtitle">Real-time insights and statistics</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" id="refreshBtn">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+        <span class="last-updated" id="lastUpdated">Updated just now</span>
+      </div>
+    </header>
+
+    <!-- Overview Stats Cards -->
+    <section class="overview-section">
+      <div class="stats-grid">
+        <div class="stat-card gradient-purple">
+          <div class="stat-content">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+              <h3 id="totalUsers">0</h3>
+              <p>Total Users</p>
+            </div>
+          </div>
+          <div class="stat-footer">
+            <span class="growth-badge" id="userGrowth">
+              <i class="fas fa-arrow-up"></i> 0%
+            </span>
+            <span class="growth-period">vs last week</span>
+          </div>
+        </div>
+
+        <div class="stat-card gradient-blue">
+          <div class="stat-content">
+            <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+            <div class="stat-info">
+              <h3 id="totalRecipes">0</h3>
+              <p>Total Recipes</p>
+            </div>
+          </div>
+          <div class="stat-footer">
+            <span class="growth-badge" id="recipeGrowth">
+              <i class="fas fa-arrow-up"></i> 0%
+            </span>
+            <span class="growth-period">vs last week</span>
+          </div>
+        </div>
+
+        <div class="stat-card gradient-green">
+          <div class="stat-content">
+            <div class="stat-icon"><i class="fas fa-folder"></i></div>
+            <div class="stat-info">
+              <h3 id="totalCategories">0</h3>
+              <p>Categories</p>
+            </div>
+          </div>
+          <div class="stat-footer">
+            <span class="today-badge">
+              <i class="fas fa-plus"></i> <span id="newRecipesToday">0</span> today
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card gradient-orange">
+          <div class="stat-content">
+            <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+            <div class="stat-info">
+              <h3 id="activeUsers">0</h3>
+              <p>Active Users</p>
+            </div>
+          </div>
+          <div class="stat-footer">
+            <span class="today-badge">
+              <i class="fas fa-user-plus"></i> <span id="newUsersToday">0</span> today
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-section">
+      <div class="charts-grid">
+        <!-- Recipe Trends Chart -->
+        <div class="chart-card large">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-line"></i> Recipe Submissions (Last 30 Days)</h3>
+            <div class="chart-controls">
+              <select id="trendPeriod">
+                <option value="7">Last 7 days</option>
+                <option value="14">Last 14 days</option>
+                <option value="30" selected>Last 30 days</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="recipesTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Difficulty Distribution Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Recipes by Difficulty</h3>
+          </div>
+          <div class="chart-body">
+            <canvas id="difficultyChart"></canvas>
+          </div>
+          <div class="chart-legend" id="difficultyLegend"></div>
+        </div>
+
+        <!-- Cooking Time Distribution -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-clock"></i> Cooking Time Distribution</h3>
+          </div>
+          <div class="chart-body">
+            <canvas id="cookingTimeChart"></canvas>
+          </div>
+        </div>
+
+        <!-- User Registration Trend -->
+        <div class="chart-card large">
+          <div class="chart-header">
+            <h3><i class="fas fa-user-plus"></i> User Registrations (Last 30 Days)</h3>
+          </div>
+          <div class="chart-body">
+            <canvas id="usersTrendChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insights & Activity Section -->
+    <section class="insights-section">
+      <div class="insights-grid">
+        <!-- Smart Insights -->
+        <div class="insights-card">
+          <div class="card-header">
+            <h3><i class="fas fa-lightbulb"></i> Smart Insights</h3>
+          </div>
+          <div class="insights-list" id="insightsList">
+            <!-- Insights will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Top Contributors -->
+        <div class="contributors-card">
+          <div class="card-header">
+            <h3><i class="fas fa-trophy"></i> Top Contributors</h3>
+          </div>
+          <div class="contributors-list" id="contributorsList">
+            <!-- Contributors will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-card">
+          <div class="card-header">
+            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+          </div>
+          <div class="activity-feed" id="activityFeed">
+            <!-- Activity will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Loading analytics...</p>
+  </div>
+
+  <script src="../js/analytics-dashboard.js"></script>
+</body>
+</html>

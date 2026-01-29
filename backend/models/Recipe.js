@@ -24,14 +24,17 @@ const recipeSchema = new mongoose.Schema(
       required: [true, "Instructions are required"],
     },
 
-    //  link to authenticated user
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: false,
+    },
 
-    // Optional fields
     cookingTime: {
       type: Number,
       min: [1, "Cooking time must be at least 1 minute"],
