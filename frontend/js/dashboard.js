@@ -53,6 +53,10 @@ async function loadPage(page, btnId) {
       await window.loadRecipeDetails();
     }
 
+    if (page === "meal-planner.html" && window.loadMealPlanner) {
+      await window.loadMealPlanner();
+    }
+
     // Set active sidebar button
     if (btnId) {
       document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
