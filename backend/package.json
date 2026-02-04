@@ -10,7 +10,10 @@
     "test:coverage": "npx nyc npx mocha test --config test/.mocharc.js",
     "start": "node server.js",
     "create-admin": "node scripts/createAdminSimple.js",
-    "test-admin": "node scripts/testAdminLogin.js"
+    "test-admin": "node scripts/testAdminLogin.js",
+    "test:frontend": "playwright test --config playwright.config.js",
+    "test:frontend:headed": "playwright test --config playwright.config.js --headed",
+    "seed-demo": "node scripts/seedDemoData.js"
   },
   "author": "Janitha",
   "license": "ISC",
@@ -31,6 +34,7 @@
     "chai": "^4.5.0",
     "cross-env": "^7.0.3",
     "mocha": "^10.8.2",
+    "@playwright/test": "^1.55.0",
     "sinon": "^17.0.1",
     "supertest": "^6.3.4"
   }
