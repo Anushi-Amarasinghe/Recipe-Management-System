@@ -178,9 +178,8 @@
     });
     const userData = await userRes.json().catch(() => ({}));
     if (userRes.ok && Array.isArray(userData.trends)) {
-      const labels = userData.trends.map((t) => t.date);
-      const counts = userData.trends.map((t) => t.total);
-      renderLineChart("userTrends", userTrendCanvas, labels, counts, "#2563eb");
+      const { labels, values } = window.AdminChartUtils.buildTrendSeries(userData.trends);
+      renderLineChart("userTrends", userTrendCanvas, labels, values, "#2563eb");
     }
 
     const recipeRes = await fetch(`/api/admin/analytics/recipe-trends?days=${days}`, {
@@ -188,9 +187,8 @@
     });
     const recipeData = await recipeRes.json().catch(() => ({}));
     if (recipeRes.ok && Array.isArray(recipeData.trends)) {
-      const labels = recipeData.trends.map((t) => t.date);
-      const counts = recipeData.trends.map((t) => t.total);
-      renderLineChart("recipeTrends", recipeTrendCanvas, labels, counts, "#10b981");
+      const { labels, values } = window.AdminChartUtils.buildTrendSeries(recipeData.trends);
+      renderLineChart("recipeTrends", recipeTrendCanvas, labels, values, "#10b981");
     }
   };
 
@@ -200,12 +198,7 @@
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data?.error?.message || data.message || "Failed to load rating buckets");
-    const bucketMap = {};
-    (data.buckets || []).forEach((bucket) => {
-      bucketMap[bucket._id] = bucket.total;
-    });
-    const labels = ["0-1", "1-2", "2-3", "3-4", "4-5", "5+"];
-    const values = [0, 1, 2, 3, 4, 5].map((value) => bucketMap[value] || 0);
+    const { labels, values } = window.AdminChartUtils.buildRatingBuckets(data.buckets || []);
     renderBarChart("ratingBuckets", ratingBucketCanvas, labels, values, "#f59e0b");
   };
 
@@ -215,8 +208,7 @@
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data?.error?.message || data.message || "Failed to load role breakdown");
-    const labels = (data.roles || []).map((r) => r.role || "unknown");
-    const values = (data.roles || []).map((r) => r.total || 0);
+    const { labels, values } = window.AdminChartUtils.buildRoleBreakdown(data.roles || []);
     renderBarChart("roleBreakdown", roleBreakdownCanvas, labels, values, "#6366f1");
   };
 
