@@ -1,0 +1,24 @@
+<div class="top-bar top-bar-trash">
+  <h2>Trash</h2>
+  <div class="top-bar-actions">
+    <a class="back-link" href="#" id="backToMyRecipes">← My Recipes</a>
+    <span class="bulk-actions" id="trashBulkActions" style="display: none;">
+      <button type="button" class="restore-btn bulk" id="trashRestoreSelected">Restore selected</button>
+    </span>
+  </div>
+</div>
+
+<p class="trash-hint">Recipes you move to trash appear here. Restore them to bring them back to My Recipes.</p>
+
+<div class="trash-toolbar" id="trashToolbar" style="display: none;">
+  <label class="select-all-wrap">
+    <input type="checkbox" id="trashSelectAll" />
+    <span>Select all</span>
+  </label>
+</div>
+
+<div class="recipes-grid" id="trashGrid">
+  <p>Loading…</p>
+</div>
+
+<script src="/js/trash.js"></script>

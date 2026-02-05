@@ -42,14 +42,21 @@ async function renderMyRecipes() {
     const recipes = data.recipes || [];
 
     if (!recipes.length) {
-      grid.innerHTML = "<p>No recipes yet. Click "Add New Recipe".</p>";
+      grid.innerHTML = "<p>No recipes yet. Click \"Add New Recipe\".</p>";
       return;
     }
+
+    const toolbar = document.getElementById("myRecipesToolbar");
+    if (toolbar) toolbar.style.display = "flex";
 
     grid.innerHTML = recipes
       .map(
         (r) => `
-        <div class="recipe-card">
+        <div class="recipe-card recipe-card-my" style="position: relative;">
+          <label class="recipe-card-checkbox">
+            <input type="checkbox" class="recipe-card-cb" data-id="${escapeHtml(r._id)}" />
+            <span class="check-label">Select</span>
+          </label>
           <div class="image-placeholder">
             ${
               r.imageUrl
@@ -66,13 +73,30 @@ async function renderMyRecipes() {
 
             <div class="actions">
               <button class="edit-btn" data-id="${escapeHtml(r._id)}">Edit</button>
-              <button class="delete-btn" data-id="${escapeHtml(r._id)}">Delete</button>
+              <button class="delete-btn" data-id="${escapeHtml(r._id)}">Move to trash</button>
             </div>
           </div>
         </div>
       `
       )
       .join("");
+
+    const selectAll = document.getElementById("myRecipesSelectAll");
+    const moveBtn = document.getElementById("myRecipesMoveToTrash");
+    const checkboxes = grid.querySelectorAll(".recipe-card-cb");
+    if (selectAll) {
+      selectAll.checked = false;
+      selectAll.onchange = () => {
+        checkboxes.forEach((cb) => (cb.checked = selectAll.checked));
+        if (moveBtn) moveBtn.disabled = !grid.querySelectorAll(".recipe-card-cb:checked").length;
+      };
+    }
+    checkboxes.forEach((cb) => {
+      cb.addEventListener("change", () => {
+        if (moveBtn) moveBtn.disabled = !grid.querySelectorAll(".recipe-card-cb:checked").length;
+      });
+    });
+    if (moveBtn) moveBtn.disabled = true;
   } catch (err) {
     console.error(err);
     grid.innerHTML = "<p>Error loading recipes.</p>";

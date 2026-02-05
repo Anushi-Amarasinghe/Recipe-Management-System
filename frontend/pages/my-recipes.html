@@ -1,6 +1,17 @@
 <div class="top-bar">
   <h2>My Recipes</h2>
-  <a class="add-recipe" href="/pages/add-recipe.html">+ Add New Recipe</a>
+  <div class="top-bar-actions">
+    <a class="add-recipe" href="/pages/add-recipe.html">+ Add New Recipe</a>
+    <a class="trash-link" href="#" id="openTrash">Trash</a>
+  </div>
+</div>
+
+<div class="my-recipes-toolbar" id="myRecipesToolbar" style="display: none;">
+  <label class="select-all-wrap">
+    <input type="checkbox" id="myRecipesSelectAll" />
+    <span>Select all</span>
+  </label>
+  <button type="button" class="move-trash-btn" id="myRecipesMoveToTrash" disabled>Move selected to trash</button>
 </div>
 
 <div class="recipes-grid" id="recipesGrid">

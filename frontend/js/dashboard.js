@@ -83,6 +83,11 @@ async function loadPage(page, btnId) {
       await window.loadRecipeDetails();
     }
 
+    if (page === "trash.html") {
+      await new Promise(resolve => setTimeout(resolve, 50));
+      if (window.loadTrash) await window.loadTrash();
+    }
+
     // Set active sidebar button
     if (btnId) {
       document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
@@ -104,7 +109,8 @@ const sidebarMap = {
   myRecipesBtn: "my-recipes.html",
   favouritesBtn: "favourites.html",
   mealPlannerBtn: "meal-planner.html",
-  settingsBtn: "settings.html"
+  settingsBtn: "settings.html",
+  trashBtn: "trash.html"
 };
 
 for (const [btnId, page] of Object.entries(sidebarMap)) {
@@ -140,12 +146,12 @@ mainContent.addEventListener("click", async (e) => {
     return;
   }
 
-  // DELETE button
+  // DELETE button -> Move to trash (soft delete)
   const deleteBtn = e.target.closest(".delete-btn");
   if (deleteBtn) {
     const recipeId = deleteBtn.dataset.id;
     if (!recipeId) return;
-    if (!confirm("Delete this recipe?")) return;
+    if (!confirm("Move this recipe to trash? You can restore it from Trash.")) return;
 
     const token = localStorage.getItem("token");
     if (!token) {
@@ -154,29 +160,102 @@ mainContent.addEventListener("click", async (e) => {
     }
 
     try {
-      const res = await fetch(`/api/recipes/${encodeURIComponent(recipeId)}`, {
-        method: "DELETE",
+      const res = await fetch("/api/recipes/bulk-delete", {
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ids: [recipeId] })
       });
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to delete recipe");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to move to trash");
 
-      // Refresh the recipes list
-      if (window.loadMyRecipes) {
-        await window.loadMyRecipes();
-      } else if (window.renderMyRecipes) {
-        await window.renderMyRecipes();
-      }
+      if (window.loadMyRecipes) await window.loadMyRecipes();
+      else if (window.renderMyRecipes) await window.renderMyRecipes();
     } catch (err) {
-      alert(err.message || "Failed to delete recipe");
+      alert(err.message || "Failed to move to trash");
     }
   }
 
+  // Open Trash (from My Recipes top bar)
+  if (e.target.closest("#openTrash")) {
+    e.preventDefault();
+    loadPage("trash.html", "trashBtn");
+    return;
+  }
+
+  // Back to My Recipes (from Trash page)
+  if (e.target.closest("#backToMyRecipes")) {
+    e.preventDefault();
+    loadPage("my-recipes.html", "myRecipesBtn");
+    return;
+  }
+
+  // Trash: Restore selected (bulk)
+  if (e.target.closest("#trashRestoreSelected")) {
+    const grid = document.getElementById("trashGrid");
+    if (!grid) return;
+    const ids = Array.from(grid.querySelectorAll(".trash-item-cb:checked")).map((cb) => cb.dataset.id).filter(Boolean);
+    if (!ids.length) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) { alert("Please log in."); return; }
+    try {
+      await window.restoreRecipeIds(ids);
+      if (window.loadTrash) await window.loadTrash();
+    } catch (err) {
+      alert(err.message || "Failed to restore");
+    }
+    return;
+  }
+
+  // Trash: Restore single
+  const restoreBtn = e.target.closest(".restore-btn.single");
+  if (restoreBtn) {
+    const id = restoreBtn.dataset.id;
+    if (!id) return;
+    const token = localStorage.getItem("token");
+    if (!token) { alert("Please log in."); return; }
+    try {
+      await window.restoreRecipeIds([id]);
+      if (window.loadTrash) await window.loadTrash();
+    } catch (err) {
+      alert(err.message || "Failed to restore");
+    }
+    return;
+  }
+
+  // My Recipes: Move selected to trash (bulk)
+  const moveTrashBtn = e.target.closest(".move-trash-btn");
+  if (moveTrashBtn) {
+    const grid = document.getElementById("recipesGrid");
+    if (!grid) return;
+    const ids = Array.from(grid.querySelectorAll(".recipe-card-cb:checked")).map((cb) => cb.dataset.id).filter(Boolean);
+    if (!ids.length) {
+      alert("Select at least one recipe.");
+      return;
+    }
+    if (!confirm(`Move ${ids.length} recipe(s) to trash?`)) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) { alert("Please log in."); return; }
+    try {
+      const res = await fetch("/api/recipes/bulk-delete", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ids })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "Failed to move to trash");
+      if (window.loadMyRecipes) await window.loadMyRecipes();
+      else if (window.renderMyRecipes) await window.renderMyRecipes();
+    } catch (err) {
+      alert(err.message || "Failed to move to trash");
+    }
+    return;
+  }
 });
 
 /* ===========================
@@ -220,18 +299,26 @@ async function loadMyRecipes() {
     const recipes = Array.isArray(data.recipes) ? data.recipes : [];
     if (recipes.length === 0) {
       grid.innerHTML = "<p>No recipes saved yet.</p>";
+      const toolbar = document.getElementById("myRecipesToolbar");
+      if (toolbar) toolbar.style.display = "none";
       return;
     }
 
+    const toolbar = document.getElementById("myRecipesToolbar");
+    if (toolbar) toolbar.style.display = "flex";
+
     grid.innerHTML = recipes
       .map(r => `
-        <div class="recipe-card" 
+        <div class="recipe-card recipe-card-my" style="position: relative;" 
           data-likes="${r.likes || 0}" 
           data-dislikes="${r.dislikes || 0}" 
           data-category="${r.category}" 
           data-region="${r.region}" 
           data-date="${r.createdAt}">
-
+          <label class="recipe-card-checkbox">
+            <input type="checkbox" class="recipe-card-cb" data-id="${r._id}" />
+            <span class="check-label">Select</span>
+          </label>
           <div class="image-placeholder">
             ${r.imageUrl ? `<img src="${r.imageUrl}" alt="${escapeHtml(r.title)}" />` : "[IMAGE]"}
           </div>
@@ -249,12 +336,28 @@ async function loadMyRecipes() {
             <div class="actions">
               <button class="open-btn" data-id="${r._id}">Open</button>
               <button class="edit-btn" data-id="${r._id}">Edit</button>
-              <button class="delete-btn" data-id="${r._id}">Delete</button>
+              <button class="delete-btn" data-id="${r._id}">Move to trash</button>
             </div>
           </div>
         </div>
       `).join("");
 
+    const selectAll = document.getElementById("myRecipesSelectAll");
+    const moveBtn = document.getElementById("myRecipesMoveToTrash");
+    const checkboxes = grid.querySelectorAll(".recipe-card-cb");
+    if (selectAll) {
+      selectAll.checked = false;
+      selectAll.onchange = () => {
+        checkboxes.forEach((cb) => (cb.checked = selectAll.checked));
+        if (moveBtn) moveBtn.disabled = !grid.querySelectorAll(".recipe-card-cb:checked").length;
+      };
+    }
+    checkboxes.forEach((cb) => {
+      cb.addEventListener("change", () => {
+        if (moveBtn) moveBtn.disabled = !grid.querySelectorAll(".recipe-card-cb:checked").length;
+      });
+    });
+    if (moveBtn) moveBtn.disabled = true;
   } catch (err) {
     console.error(err);
     grid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
