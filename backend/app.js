@@ -9,10 +9,13 @@ const recipeRoutes = require("./routes/recipes");
 const commentRoutes = require("./routes/comments");
 const usersRoutes = require("./routes/users");
 const activityRoutes = require("./routes/activities");
-const studentRoute = require("./routes/student");
 const authBodyLimiter = require("./middleware/bodySizeLimiter");
 
 const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the Recipe Management System!');
+});
 
 // Middleware
 app.use(cors());
