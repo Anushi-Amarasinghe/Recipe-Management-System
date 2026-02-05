@@ -17,7 +17,8 @@
         <!-- Recipe Name -->
         <div class="field">
           <label for="title">Recipe Name</label>
-          <input class="readonly-field" id="title" readonly>
+          <!-- <input class="readonly-field recipe-title" id="title" readonly> -->
+          <span id="title" class="readonly-field recipe-title"></span>
         </div>
 
         <!-- Category -->
@@ -106,7 +107,7 @@
     <aside class="recipe-meta-wrapper">
 
       <!-- Prep / Cook / Serves -->
-      <div class="recipe-meta">
+      <div class="recipe-meta fade-slide">
         <div class="meta-item">
           <span class="meta-label">Prep</span>
           <span class="meta-value" id="prepTime">-</span>
@@ -122,7 +123,7 @@
       </div>
 
       <!-- Author -->
-      <div class="recipe-author">
+      <div class="recipe-author fade-slide">
         <img src="images/chef.png" alt="Recipe Author" id="authorAvatar">
         <div>         
           <p class="author-role" id="authorRole">By</p>
