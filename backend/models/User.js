@@ -43,6 +43,18 @@ const userSchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
   ref: "Recipe"
 }]
+  deletedAt: {
+    type: Date,
+    default: null
+  },
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null
+  },
+  mode: {
+    type: Boolean
+  }
 });
 
 // Pre-save hook to ensure email is always lowercase and trimmed
