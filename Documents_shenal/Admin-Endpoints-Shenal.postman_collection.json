@@ -1,0 +1,403 @@
+{
+  "info": {
+    "name": "Admin Endpoints - Shenal",
+    "_postman_id": "2b6e7f5e-6c5a-4b4c-a1e4-7d8c94a4b7f0",
+    "description": "Admin endpoints for Recipe Management System.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "admin", "login"]
+            }
+          }
+        },
+        {
+          "name": "Admin Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/admin/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "admin", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/admin?page=1&limit=10&status=all&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "admin"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "all" },
+                { "key": "search", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Seasonal\",\n  \"description\": \"Seasonal recipes\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Seasonal\",\n  \"description\": \"Updated description\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{categoryId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "{{categoryId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recipes",
+      "item": [
+        {
+          "name": "List Recipes (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recipes/admin/all?page=1&limit=10&status=active&search=&category=&userId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "recipes", "admin", "all"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "active" },
+                { "key": "search", "value": "" },
+                { "key": "category", "value": "" },
+                { "key": "userId", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Recipe (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/recipes/admin/{{recipeId}}?mode=soft",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "recipes", "admin", "{{recipeId}}"],
+              "query": [
+                { "key": "mode", "value": "soft" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bulk Delete Recipes (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"{{recipeId}}\"],\n  \"mode\": \"soft\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/recipes/admin/bulk-delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "recipes", "admin", "bulk-delete"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin/all?page=1&limit=10&status=all&role=all&search=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin", "all"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "all" },
+                { "key": "role", "value": "all" },
+                { "key": "search", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"active\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin/{{userId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin", "{{userId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete User (Soft/Hard)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin/{{userId}}?hard=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin", "{{userId}}"],
+              "query": [
+                { "key": "hard", "value": "false" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bulk Deactivate Users",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"{{userId}}\"],\n  \"active\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin/bulk-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin", "bulk-status"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Delete Users",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"{{userId}}\"],\n  \"hard\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/admin/bulk-delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "admin", "bulk-delete"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "overview"]
+            }
+          }
+        },
+        {
+          "name": "User Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/user-trends?days=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "user-trends"],
+              "query": [
+                { "key": "days", "value": "30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recipe Trends",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/recipe-trends?days=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "recipe-trends"],
+              "query": [
+                { "key": "days", "value": "30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Category Usage",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/category-usage",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "category-usage"]
+            }
+          }
+        },
+        {
+          "name": "Rating Buckets",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/recipe-rating-buckets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "recipe-rating-buckets"]
+            }
+          }
+        },
+        {
+          "name": "Tag Insights",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/tag-insights",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "tag-insights"]
+            }
+          }
+        },
+        {
+          "name": "Role Breakdown",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/user-role-breakdown",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics", "user-role-breakdown"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "adminToken", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "recipeId", "value": "" },
+    { "key": "categoryId", "value": "" }
+  ]
+}
