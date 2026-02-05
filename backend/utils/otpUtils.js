@@ -1,3 +1,5 @@
+// utils/otpUtils.js
+
 const bcrypt = require('bcryptjs');
 
 /**

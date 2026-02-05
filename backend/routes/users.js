@@ -11,6 +11,8 @@ const Activity = require("../models/Activity");
 const { sendError, ErrorCodes } = require("../utils/errorHandler");
 const { body, query, param, validationResult } = require("express-validator");
 const { logAdminAction } = require("../utils/adminAudit");
+const { generateOtp, verifyOtp } = require("../utils/otpUtils");
+
 
 const handleValidation = (req, res, next) => {
   const errors = validationResult(req);
@@ -506,52 +508,32 @@ router.post(
 // =========================
 // FORGOT PASSWORD - VERIFY EMAIL & SEND OTP
 // =========================
-const { generateOtp } = require("../utils/otpUtils");
-
-// POST /api/users/verify-email
 router.post("/verify-email", async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-    // 1Validate input
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
-
-    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "Email not found" });
-    }
+    if (!user) return res.status(404).json({ message: "Email not found" });
 
-    // Generate OTP using utility function
     const { otp, hashedOtp, expiresAt } = await generateOtp();
 
-    // Save hashed OTP and expiry to user
     user.otp = hashedOtp;
     user.otpExpires = expiresAt;
     await user.save();
 
-    // Send OTP via email service (TODO)
     console.log(`Password Reset OTP for ${email}: ${otp} (expires at ${expiresAt})`);
 
-    // Respond to frontend
     res.json({ message: "Email verified. OTP sent successfully." });
-
   } catch (err) {
     console.error("Forgot password email verify error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-module.exports = router;
-
-
-
 // =========================
-// OTP verification route
+// OTP verification & save pw route
 // =========================
-
 router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
@@ -572,10 +554,64 @@ router.post("/verify-otp", async (req, res) => {
     await user.save();
 
     res.json({ message: "Password reset successfully" });
-
   } catch (err) {
     console.error("Verify OTP error:", err);
-    res.status(500).json({ message: "Server error" }); // <-- always JSON
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST /api/users/favourite
+router.post("/favourite", authMiddleware, async (req, res) => {
+  try {
+    const { recipeId, favourite } = req.body;
+
+    if (!recipeId) {
+      return res.status(400).json({
+        success: false,
+        message: "recipeId is required"
+      });
+    }
+
+    const userId = req.userId; // set by authMiddleware
+
+    // Ensure user exists first
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Make sure favourites array exists
+    if (!Array.isArray(user.favourites)) {
+      user.favourites = [];
+    }
+
+    // Add or remove recipeId
+    if (favourite === true) {
+      if (!user.favourites.includes(recipeId)) {
+        user.favourites.push(recipeId);
+      }
+    } else {
+      user.favourites = user.favourites.filter(
+        id => id.toString() !== recipeId
+      );
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      favourites: user.favourites
+    });
+
+  } catch (err) {
+    console.error("Favourite update failed:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update favourite"
+    });
   }
 });
 

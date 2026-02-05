@@ -252,17 +252,33 @@ router.post("/:id/restore", auth, userOrAdmin, async (req, res) => {
 });
 
 /** Get single recipe */
+/** Get single recipe with user's favourite info */
 router.get("/:id", auth, async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id);
-    if (!recipe || recipe.deletedAt) return res.status(404).json({ message: "Recipe not found" });
-    if (String(recipe.userId) !== String(req.userId)) return res.status(403).json({ message: "Not allowed" });
-    return res.json({ recipe });
+    const recipe = await Recipe.findById(req.params.id).lean(); // plain JS object
+    if (!recipe || recipe.deletedAt) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    // Get the logged-in user
+    const user = await User.findById(req.userId).lean();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if this recipe is in **this user's favourites**
+    const favourite = Array.isArray(user.favourites) && 
+                      user.favourites.some(favId => String(favId) === String(recipe._id));
+
+    // Send recipe data + favourite status for this user
+    return res.json({ recipe: { ...recipe, favourite } });
+
   } catch (err) {
     console.error("Get recipe error:", err);
     return res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
 
 /* ===========================
    Update, Delete, Admin routes
@@ -302,6 +318,8 @@ router.put("/:id", auth, userOrAdmin, upload.single("image"), async (req, res) =
       cookingTime: parseNumber(req.body.cookingTime, recipe.cookingTime),
       prepTime: parseNumber(req.body.prepTime, recipe.prepTime),
       servings: parseNumber(req.body.servings, recipe.servings),
+      is_like: isFinite(parseNumber(req.body.is_like)) ? parseNumber(req.body.is_like) : recipe.is_like,
+      is_dislike: isFinite(parseNumber(req.body.is_dislike)) ? parseNumber(req.body.is_dislike) : recipe.is_dislike,
     });
 
     await recipe.save();
