@@ -111,7 +111,7 @@ async function loadPage(page, btnId) {
 const sidebarMap = {
   RecipesBtn: "recipes.html",
   myRecipesBtn: "my-recipes.html",
-  favouritesBtn: "test.html", //favourites.html
+  favouritesBtn: "favourites.html",
   mealPlannerBtn: "meal-planner.html",
   settingsBtn: "settings.html"
 };
