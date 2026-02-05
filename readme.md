@@ -51,6 +51,71 @@ npm start
 - Backend + frontend: **http://localhost:5000**
 - Frontend is served as static files from `../frontend`
 - API base: **http://localhost:5000/api**
+- Student identity: **http://localhost:5000/api/student**
+
+---
+
+## 🐳 Docker (Containerised App)
+
+### Prerequisites
+- Docker Desktop installed and running
+
+### Build & Run
+From the repo root:
+```bash
+docker compose up --build
+```
+
+### Access
+- App: **http://localhost:5001**
+- Student endpoint: **http://localhost:5001/api/student**
+
+Expected response:
+```json
+{
+  "name": "Luwis Hennadige Shenal Naveen Fernando",
+  "studentId": "224324112"
+}
+```
+
+### Configuration Notes
+- The Docker setup uses a MongoDB container and sets:
+  - `MONGO_URI=mongodb://mongo:27017/recipe-management`
+  - `JWT_SECRET=change-me-in-production` (override before assessment)
+  - `PORT=5000`
+- For assessment, provide your own secret without committing it:
+  - Option A: Set it at runtime:
+    ```bash
+    JWT_SECRET=your-secret docker compose up --build
+    ```
+  - Option B: Create a `.env` file (do not commit) and add:
+    ```
+    JWT_SECRET=your-secret
+    ```
+
+### Docker Verification Checklist
+1. Open **http://localhost:5001** and confirm the login page loads.
+2. Register a user and log in successfully.
+3. Create a recipe and confirm it appears in the list.
+4. Visit **http://localhost:5001/api/student** and verify the JSON response.
+
+---
+
+## ✅ Marker Checklist (Docker)
+- Build and run:
+  ```bash
+  docker compose up --build
+  ```
+- Access via browser: **http://localhost:5001**
+- Verify DB-backed feature:
+  - Sign up and log in
+  - Create a recipe and view it in the list
+- Verify identity endpoint:
+  - **http://localhost:5001/api/student**  
+    returns:
+    ```json
+    { "name": "Luwis Hennadige Shenal Naveen Fernando", "studentId": "224324112" }
+    ```
 
 ---
 

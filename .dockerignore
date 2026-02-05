@@ -1,0 +1,9 @@
+**/node_modules
+**/test-results
+**/uploads
+.git
+.gitignore
+.DS_Store
+Documentation_anushi
+Documents_shenal
+**/*.log

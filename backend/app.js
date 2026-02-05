@@ -33,6 +33,14 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
+// Student identity endpoint (Docker requirement)
+app.get("/api/student", (req, res) => {
+  res.json({
+    name: "Luwis Hennadige Shenal Naveen Fernando",
+    studentId: "224324112"
+  });
+});
+
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes);
