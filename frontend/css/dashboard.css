@@ -445,6 +445,12 @@ body.dark-mode .recipe-card {
   box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
+body.dark-mode .edit-card {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  background-color: #1e1e1e;
+  color: var(--text);
+}
+
 body.dark-mode .recipe-card .image-placeholder {
   background: linear-gradient(135deg, #2e7d32, #1b5e20);
   color: #c8e6c9;
@@ -455,6 +461,17 @@ body.dark-mode .readonly-field {
   background-color: #1e1e1e;
   color: var(--text);
 }
+
+body.dark-mode .edit-card .field input {
+  background-color: #1e1e1e;
+  color: var(--text);
+  border: 1px solid #333; /* optional */
+}
+
+body.dark-mode .edit-card .field input::placeholder {
+  color: #aaa; /* placeholder color for dark mode */
+}
+
 
 /* Likes */
 body.dark-mode .likes-wrapper i:hover {

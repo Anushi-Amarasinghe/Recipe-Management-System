@@ -54,7 +54,13 @@ const userSchema = new mongoose.Schema({
   },
   mode: {
     type: Boolean
-  }
+  },
+  favourites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Recipe"
+    }
+  ]
 });
 
 // Pre-save hook to ensure email is always lowercase and trimmed

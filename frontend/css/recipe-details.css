@@ -59,14 +59,160 @@
   color: var(--muted);
 }
 
+input.readonly-field[readonly] {
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.recipe-title {
+  font-size: 3.6rem;              /* BIG */
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -1.2px;
+
+  color: var(--primary);
+
+  background: linear-gradient(
+    90deg,
+    #e3fc9f,
+    #257737,
+    #201e41
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: fadeSlide 0.7s ease-out;
+}
+
+
+.fade-slide {
+  animation: fadeSlide 0.6s ease-out;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ===========================
+   Badges: Difficulty & Category
+=========================== */
+.badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.category-badge {
+  background: #ffecb3;
+  color: #ff6f00;
+}
+
+.difficulty-badge.easy {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.difficulty-badge.medium {
+  background: #fff9c4;
+  color: #f9a825;
+}
+
+.difficulty-badge.hard {
+  background: #ffcdd2;
+  color: #c62828;
+}
+
+/* ===========================
+   Ingredients
+=========================== */
+#ingredientsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+#ingredientsList li {
+  background: #e0f7fa;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+}
+
+/* ===========================
+   Likes/Dislikes
+=========================== */
+.likes-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-top: 0.3rem;
+}
+
+.likes-wrapper button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f3f4f6;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s all;
+}
+
+.likes-wrapper button:hover {
+  background-color: #E5E7EB;
+}
+
+.like-btn i {
+  color: #4CAF50;
+}
+.dislike-btn i {
+  color: #F44336;
+}
+
+.like-btn:hover i {
+  color: #388E3C;
+}
+
+/* ===========================
+   Rating Stars
+=========================== */
 .stars {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
+  gap: 0.25rem;
+  font-size: 1.1rem;
   color: #ffb700;
 }
 
+.stars i {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.stars i:hover,
+.stars i.active {
+  color: #ff9800;
+}
+
+/* ===========================
+   Image Preview
+=========================== */
 .image-preview {
   height: 220px;
   border-radius: 12px;
@@ -76,6 +222,12 @@
   justify-content: center;
   overflow: hidden;
   border: 1px solid var(--border);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.image-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .image-preview img {
@@ -90,6 +242,9 @@
   color: var(--muted);
 }
 
+/* ===========================
+   Favourites
+=========================== */
 .fav-field label {
   display: flex;
   align-items: center;
@@ -98,7 +253,13 @@
   cursor: pointer;
 }
 
-/* Right: Meta + Author */
+.fav-field input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+/* ===========================
+   Right: Meta + Author
+=========================== */
 .recipe-meta-wrapper {
   display: flex;
   flex-direction: column;
@@ -178,104 +339,6 @@
   gap: 1rem;
 }
 
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.comment-form textarea {
-  padding: 0.55rem 0.8rem;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  font-size: 0.95rem;
-  resize: vertical;
-}
-
-.comment-form .btn {
-  align-self: flex-end;
-  padding: 0.6rem 1.3rem;
-  border-radius: 10px;
-  font-weight: 600;
-  background: var(--primary);
-  color: white;
-  cursor: pointer;
-  border: none;
-  transition: all 0.25s ease;
-}
-
-.comment-form .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(76, 175, 80, 0.35);
-}
-
-/* ===========================
-   Responsive
-=========================== */
-@media (max-width: 900px) {
-  .recipe-main-layout {
-    grid-template-columns: 1fr; /* Stack on smaller screens */
-  }
-}
-
-@media (max-width: 600px) {
-  .page-inner {
-    padding: 1rem;
-  }
-}
-
-.likes-wrapper {
-  display: flex;
-  gap: 12px;
-}
-
-.likes-wrapper button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #f3f4f6;
-  border: 1px solid #D1D5DB;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s all;
-}
-
-.likes-wrapper button:hover {
-  background-color: #E5E7EB;
-}
-
-.likes-wrapper button i {
-  font-size: 16px;
-}
-
-/* Optional: separate colors for like/dislike */
-.like-btn i {
-  color: #4CAF50;
-}
-.dislike-btn i {
-  color: #F44336;
-}
-
-.like-btn:hover i {
-  color: #388E3C;
-}
-
-/* =========================
-   Comments Section
-========================= */
-
-.comments-section {
-  margin-top: 32px;
-}
-
-.comments-section h3 {
-  font-size: 20px;
-  margin-bottom: 16px;
-  color: #111827;
-}
-
 /* Comment cards */
 .comment-card {
   display: flex;
@@ -298,18 +361,13 @@
 .comment-card p {
   margin: 0;
   font-size: 14px;
-  color: #1364bb;
-}
-
-.comment-card p:first-child {
-  font-weight: 600;
   color: #111827;
 }
 
-.comment-card p:first-child span {
+.comment-card p span {
   font-weight: 400;
   color: #6B7280;
-  margin-left: 8px;
+  margin-left: 6px;
   font-size: 12px;
 }
 
@@ -370,17 +428,79 @@
   border-color: #45A049;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .comment-card {
-    flex-direction: column;
-  }
 
-  .comment-input-wrapper {
-    flex-direction: column;
-  }
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;                  /* spacing between comments */
+  max-height: 400px;           /* scroll if too many comments */
+  overflow-y: auto;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: #fff;      /* clean card background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* soft shadow */
+  transition: all 0.3s ease;
+}
 
-  .comment-input-wrapper .comment-avatar {
-    margin-left: 0;
+.comment-card {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background-color: #fafafa;
+  border-left: 4px solid var(--primary); /* accent border */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  animation: fadeSlide 0.5s ease-out;
+}
+
+.comment-card img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+
+.comment-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+.comment-card strong {
+  color: var(--primary);
+  margin-right: 0.25rem;
+}
+
+.comment-card span {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.comments-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.15);
+  border-radius: 3px;
+}
+
+
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 900px) {
+  .recipe-main-layout {
+    grid-template-columns: 1fr; /* Stack on smaller screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .page-inner {
+    padding: 1rem;
   }
 }

@@ -9,6 +9,8 @@ const recipeSchema = new mongoose.Schema(
     category: { type: String, default: "Dinner" },
     rating: { type: Number, default: 0 },
     imageUrl: { type: String, default: "" },
+    is_like: { type: Number, default: 0 },
+    is_dislike: { type: Number, default: 0 },
     
     // New fields
     ingredients: { type: [String], default: [] },
