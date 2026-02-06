@@ -1,96 +1,166 @@
-(function() {
-  // Use a private variable to avoid redeclaration issues
-  let plannerRecipes = [];
+(function () {
 
-  /* ===========================
-     Load recipes for planner
-  ============================ */
-  async function loadPlannerRecipes() {
-    try {
-      const res = await fetch("/api/recipes");
-      const data = await res.json();
+  const plannerRoot = document.querySelector(".meal-planner-container");
+  if (!plannerRoot) return; 
 
-      if (!res.ok) {
-        console.error("Failed to load recipes");
-        return;
+  const modal = document.getElementById("mealModal");
+  const recipeSelect = document.getElementById("recipeSelect");
+  const modalTitle = document.getElementById("modalTitle");
+
+  let activeSlot = null;
+
+  // ---------- GLOBAL CLICK HANDLER ----------
+  document.addEventListener("click", async (e) => {
+
+    
+    const addBtn = e.target.closest(".add-meal-btn");
+    if (addBtn) {
+      activeSlot = addBtn.closest(".meal-slot");
+
+      const day = addBtn.closest(".meal-day").dataset.day;
+      const meal = activeSlot.dataset.meal;
+
+      modalTitle.textContent = `Add meal for ${day} (${meal})`;
+
+      await loadRecipes();
+      modal.style.display = "flex";
+      return;
+    }
+
+    /* ========= CANCEL MODAL ========= */
+    if (e.target.id === "cancelMeal") {
+      modal.style.display = "none";
+      recipeSelect.value = "";
+      activeSlot = null;
+      return;
+    }
+
+    
+    if (e.target.id === "saveMeal") {
+      if (!activeSlot || !recipeSelect.value) return;
+
+      const day = activeSlot.closest(".meal-day").dataset.day;
+      const meal = activeSlot.dataset.meal;
+      const recipeId = recipeSelect.value;
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/meal-planner", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ day, meal, recipeId })
+        });
+
+        if (!res.ok) throw new Error("Save failed");
+
+        const recipeName =
+          recipeSelect.options[recipeSelect.selectedIndex].text;
+
+        activeSlot.innerHTML = `
+          <span>${recipeName}</span>
+          <button class="remove-meal-btn">✕</button>
+        `;
+
+        modal.style.display = "none";
+        recipeSelect.value = "";
+        activeSlot = null;
+
+      } catch (err) {
+        alert("Failed to save meal");
+      }
+      return;
+    }
+
+   
+    const removeBtn = e.target.closest(".remove-meal-btn");
+    if (removeBtn) {
+      const slot = removeBtn.closest(".meal-slot");
+      const meal = slot.dataset.meal;
+      const day = slot.closest(".meal-day").dataset.day;
+
+      try {
+        const token = localStorage.getItem("token");
+        await fetch("/api/meal-planner", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ day, meal })
+        });
+      } catch {
+        console.warn("Failed to remove from DB");
       }
 
-      plannerRecipes = data.recipes || [];
-      populateMealSelectors();
-    } catch (err) {
-      console.error("Error loading planner recipes", err);
+      slot.innerHTML = `
+        <span>${meal.charAt(0).toUpperCase() + meal.slice(1)}</span>
+        <button class="add-meal-btn">+ Add</button>
+      `;
+    }
+
+  });
+
+  
+  async function loadRecipes() {
+    recipeSelect.innerHTML = `<option value="">Loading...</option>`;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/recipes", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = await res.json();
+
+      recipeSelect.innerHTML = `<option value="">Select recipe</option>`;
+      data.recipes.forEach(r => {
+        const option = document.createElement("option");
+        option.value = r._id;
+        option.textContent = r.title;
+        recipeSelect.appendChild(option);
+      });
+
+    } catch {
+      recipeSelect.innerHTML = `<option>Error loading recipes</option>`;
     }
   }
 
-  /* ===========================
-     Populate dropdowns
-  ============================ */
-  function populateMealSelectors() {
-    const selects = document.querySelectorAll(".meal-select");
-
-    selects.forEach(select => {
-      select.innerHTML = `<option value="">Select recipe</option>`;
-
-      plannerRecipes.forEach(recipe => {
-        const opt = document.createElement("option");
-        opt.value = recipe._id;
-        opt.textContent = recipe.title;
-        select.appendChild(opt);
-      });
-    });
-  }
-
-  /* ===========================
-     Save meal plan
-  ============================ */
-  async function saveMealPlan() {
-    const meals = {};
-
-    document.querySelectorAll(".meal-select").forEach(select => {
-      const day = select.dataset.day;
-      const type = select.dataset.type;
-
-      if (!meals[day]) meals[day] = {};
-      meals[day][type] = select.value || null;
-    });
-
-    try {
-      const res = await fetch("/api/users/meals", {
-        method: "PUT", // make sure your backend expects PUT
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}` // add JWT if needed
-        },
-        body: JSON.stringify({ meals })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Failed to save meal plan");
-        return;
-      }
-
-      alert("Meal plan saved successfully");
-    } catch (err) {
-      console.error(err);
-      alert("Error saving meal plan");
-    }
-  }
-
-  /* ===========================
-     Init meal planner
-  ============================ */
-  function initMealPlanner() {
-    const saveBtn = document.getElementById("saveMealPlan");
-    if (!saveBtn) return;
-
-    saveBtn.removeEventListener("click", saveMealPlan); // prevent double binding
-    saveBtn.addEventListener("click", saveMealPlan);
-
-    loadPlannerRecipes();
-  }
-
-  // Expose globally
-  window.initMealPlanner = initMealPlanner;
 })();
+
+
+async function loadMealPlan() {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/meal-planner", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    if (!data.plan) return;
+
+    Object.entries(data.plan.week || {}).forEach(([day, meals]) => {
+      Object.entries(meals || {}).forEach(([meal, slot]) => {
+        if (!slot?.recipe) return;
+
+        const el = document.querySelector(
+          `.meal-day[data-day="${day}"] .meal-slot[data-meal="${meal}"]`
+        );
+
+        if (el) {
+          el.innerHTML = `
+            <span>${slot.recipe.title}</span>
+            <button class="remove-meal-btn">✕</button>
+          `;
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error("Failed to load meal plan");
+  }
+}
+
+loadMealPlan();

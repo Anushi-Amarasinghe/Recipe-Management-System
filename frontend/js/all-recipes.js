@@ -1,6 +1,6 @@
 // all-recipes.js
 
-let allRecipes = []; // store fetched recipes
+let allRecipes = []; 
 
 /* ===========================
    Utility function: render stars
@@ -31,7 +31,14 @@ function renderRecipes(recipes) {
         <div class="content">
           <div class="title-wrapper">
             <div class="title">${r.title}</div>
-            <button class="favourites"><i class="fa-regular fa-heart"></i></button>
+            <p> kjsadhfsdhfoshdfdshfldshfsdhf</p>
+            <button 
+              class="favourites" 
+              data-id="${r._id}" 
+              data-fav="${r.isFavourite ? "true" : "false"}"
+            >
+              <i class="${r.isFavourite ? "fa-solid" : "fa-regular"} fa-heart"></i>
+            </button>
           </div>
           <div class="rating">${stars(r.rating)}</div>
           <div class="actions">
@@ -138,3 +145,30 @@ window.initRecipeFilters = initRecipeFilters;
 window.renderRecipes = renderRecipes;
 window.stars = stars;
 
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".favourites");
+  if (!btn) return;
+
+  const recipeId = btn.dataset.id;
+
+  try {
+    const res = await fetch(`/api/favourites/${recipeId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    // toggle UI
+    const icon = btn.querySelector("i");
+    icon.classList.toggle("fa-solid");
+    icon.classList.toggle("fa-regular");
+
+  } catch (err) {
+    console.error(err);
+    alert("Please login to save favourites");
+  }
+});

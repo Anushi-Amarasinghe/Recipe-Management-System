@@ -13,10 +13,6 @@ const { logAdminAction } = require("../utils/adminAudit");
 
 const router = express.Router();
 
-/* ===========================
-   Helpers
-=========================== */
-
 // Trim and normalize string safely
 const safeTrim = (val, fallback = "") =>
   val != null ? String(val).trim() : fallback;
@@ -65,9 +61,6 @@ const logActivity = async ({ userId, action, recipe }) => {
   }
 };
 
-/* ===========================
-   Multer config
-=========================== */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, "../uploads")),
   filename: (req, file, cb) => {
@@ -85,11 +78,20 @@ const upload = multer({
   },
 });
 
-/* ===========================
-   Routes
-=========================== */
+router.get("/favourites", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const recipes = await Recipe.find({
+      _id: { $in: user.favourites }
+    });
 
-/** Create recipe */
+    res.json({ recipes });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load favourites" });
+  }
+});
+
+// POST /api/recipes (create) - protected + role-based access + optional image upload
 router.post("/", auth, userOrAdmin, upload.single("image"), async (req, res) => {
   try {
     const title = safeTrim(req.body.title);
@@ -505,5 +507,7 @@ router.post("/admin/bulk-delete", auth, adminOnly, async (req, res) => {
     return res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+
 
 module.exports = router;

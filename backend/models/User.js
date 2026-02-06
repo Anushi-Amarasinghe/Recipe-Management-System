@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
   otpExpires: {
     type: Date
   },
+  favourites: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Recipe"
+}]
   deletedAt: {
     type: Date,
     default: null

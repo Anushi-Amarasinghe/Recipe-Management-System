@@ -356,9 +356,43 @@ main.content .top-bar h2 {
   background-color: #f9f9f9;
 }
 
-/* ===========================
-   Dark Mode Theme Overrides
-=========================== */
+
+
+.filter-section {
+  padding: 10px 20px 20px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.filter-group label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-options button {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.filter-options button.active {
+  border-color: #ff9800;
+  background: #fff3e0;
+  color: #ff9800;
+}
+
 body.dark-mode {
   --primary: #66bb6a;
   --primary-soft: rgba(102, 187, 106, 0.15);
@@ -371,9 +405,7 @@ body.dark-mode {
   --border: #2a2a2a;
 }
 
-/* ===========================
-   Dark Mode Component Tweaks
-=========================== */
+
 body.dark-mode header {
   background: linear-gradient(90deg, #2e7d32, #388e3c);
 }

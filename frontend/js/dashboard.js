@@ -111,7 +111,7 @@ async function loadPage(page, btnId) {
 const sidebarMap = {
   RecipesBtn: "recipes.html",
   myRecipesBtn: "my-recipes.html",
-  favouritesBtn: "test.html", //favourites.html
+  favouritesBtn: "favourites.html",
   mealPlannerBtn: "meal-planner.html",
   settingsBtn: "settings.html"
 };
@@ -316,8 +316,17 @@ async function loadAllRecipes() {
 
           <div class="content">
             <div class="title-wrapper">
-              <div class="title">${r.title}</div>
-            </div>
+            <div class="title">${escapeHtml(r.title)}</div>
+
+            <button 
+              class="favourites-btn" 
+              data-id="${r._id}" 
+              aria-label="Add to favourites"
+            >
+              <i class="${r.isFavourite ? "fa-solid" : "fa-regular"} fa-heart"></i>
+            </button>
+          </div>
+
 
             <div class="likes-wrapper">
               <div class="like-display">
@@ -342,6 +351,46 @@ async function loadAllRecipes() {
     grid.innerHTML = `<p>${escapeHtml(err.message)}</p>`;
   }
 }
+
+document.addEventListener("click", async (e) => {
+
+  const btn = e.target.closest(".favourites-btn");
+  if (!btn) return;
+
+  const recipeId = btn.dataset.id;
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login to save favourites");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/favourites/${recipeId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`   // ✅ THIS WAS MISSING
+      }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to update favourites");
+    }
+
+    // toggle UI
+    const icon = btn.querySelector("i");
+    icon.classList.toggle("fa-solid");
+    icon.classList.toggle("fa-regular");
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Failed to update favourites");
+  }
+});
+
 
 /* ===========================
    Expose globally

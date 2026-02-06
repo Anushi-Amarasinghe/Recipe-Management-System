@@ -3,9 +3,40 @@
   <a class="add-recipe" href="/pages/add-recipe.html">+ Add New Recipe</a>
 </div>
 
+<!-- FILTER BAR -->
+<div class="filter-section">
+
+  <!-- Difficulty -->
+  <div class="filter-group">
+    <label>Difficulty Level</label>
+    <div class="filter-options" id="difficultyFilter">
+      <button data-value="">All</button>
+      <button data-value="easy">Easy</button>
+      <button data-value="medium">Medium</button>
+      <button data-value="hard">Hard</button>
+    </div>
+  </div>
+
+  <!-- Dietary -->
+  <div class="filter-group">
+    <label>Dietary Information</label>
+    <div class="filter-options" id="dietFilter">
+      <button data-value="">All</button>
+      <button data-value="vegetarian">Vegetarian</button>
+      <button data-value="vegan">Vegan</button>
+      <button data-value="gluten-free">Gluten-Free</button>
+      <button data-value="dairy-free">Dairy-Free</button>
+      <button data-value="nut-free">Nut-Free</button>
+      <button data-value="keto">Keto</button>
+      <button data-value="low-carb">Low-Carb</button>
+      <button data-value="low-calorie">Low-Calorie</button>
+    </div>
+  </div>
+
+</div>
+
 <div class="recipes-grid" id="recipesGrid">
   <p>Loading…</p>
 </div>
 
 <script src="/js/my-recipes.js"></script>
-

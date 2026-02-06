@@ -2,111 +2,141 @@
   <h2>Meal Planner</h2>
 </div>
 
-<section class="meal-planner">
-  <div class="planner-header">
-    <h2>Weekly Meal Planner</h2>
-    <p>Plan your meals for the entire week</p>
+<div class="meal-planner-container">
+
+  <!-- Days column -->
+  <div class="meal-grid">
+
+  <div class="meal-day" data-day="monday">
+    <h3>Monday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
   </div>
 
-  <div class="planner-grid">
-
-    <!-- Day Card -->
-    <div class="day-card">
-      <h4>Monday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="monday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="monday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="monday" data-type="dinner"></select>
+  <div class="meal-day" data-day="tuesday">
+    <h3>Tuesday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
     </div>
-
-    <div class="day-card">
-      <h4>Tuesday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="tuesday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="tuesday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="tuesday" data-type="dinner"></select>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
     </div>
-
-    <div class="day-card">
-      <h4>Wednesday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="wednesday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="wednesday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="wednesday" data-type="dinner"></select>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
     </div>
-
-    <div class="day-card">
-      <h4>Thursday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="thursday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="thursday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="thursday" data-type="dinner"></select>
-    </div>
-
-    <div class="day-card">
-      <h4>Friday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="friday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="friday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="friday" data-type="dinner"></select>
-    </div>
-
-    <div class="day-card">
-      <h4>Saturday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="saturday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="saturday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="saturday" data-type="dinner"></select>
-    </div>
-
-    <div class="day-card">
-      <h4>Sunday</h4>
-
-      <label>🍳 Breakfast</label>
-      <select class="meal-select" data-day="sunday" data-type="breakfast"></select>
-
-      <label>🍛 Lunch</label>
-      <select class="meal-select" data-day="sunday" data-type="lunch"></select>
-
-      <label>🍽 Dinner</label>
-      <select class="meal-select" data-day="sunday" data-type="dinner"></select>
-    </div>
-
   </div>
 
-  <div class="planner-actions">
-    <button id="saveMealPlan">💾 Save Meal Plan</button>
+  <div class="meal-day" data-day="wednesday">
+    <h3>Wednesday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
   </div>
-</section>
+
+  <div class="meal-day" data-day="thursday">
+    <h3>Thursday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+  </div>
+
+  <div class="meal-day" data-day="friday">
+    <h3>Friday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+  </div>
+
+  <div class="meal-day" data-day="saturday">
+    <h3>Saturday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+  </div>
+
+  <div class="meal-day" data-day="sunday">
+    <h3>Sunday</h3>
+    <div class="meal-slot" data-meal="breakfast">
+      <span>Breakfast</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="lunch">
+      <span>Lunch</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+    <div class="meal-slot" data-meal="dinner">
+      <span>Dinner</span>
+      <button class="add-meal-btn">+ Add</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Meal Planner Modal -->
+<div class="modal-overlay" id="mealModal">
+  <div class="modal">
+    <h3 id="modalTitle">Add Meal</h3>
+
+    <label for="recipeSelect">Select Recipe</label>
+    <select id="recipeSelect">
+      <option value="">Loading recipes...</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn cancel" id="cancelMeal">Cancel</button>
+      <button class="btn save" id="saveMeal">Save</button>
+    </div>
+  </div>
+</div>
 
 
+<script src="/js/meal-planner.js"></script>
