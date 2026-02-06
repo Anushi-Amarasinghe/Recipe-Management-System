@@ -13,12 +13,9 @@ const studentRoute = require("./routes/student");
 const authBodyLimiter = require("./middleware/bodySizeLimiter");
 const favouritesRoutes = require("./routes/favourites");
 const mealPlannerRoutes = require("./routes/meal-planner");
+const adminAnalyticsRoutes = require("./routes/adminAnalytics");
 
 const app = express();
-
-app.get('/', (req, res) => {
-  res.send('Welcome to the Recipe Management System!');
-});
 
 // Middleware
 app.use(cors());
