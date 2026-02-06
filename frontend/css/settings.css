@@ -94,3 +94,34 @@
   border: 1px solid #D1D5DB;
   color: #374151;
 }
+
+/* password-rules */
+.password-rules li.valid {
+  color: green;
+}
+
+.password-rules li.invalid {
+  color: red;
+}
+
+#confirmMatchMsg.valid {
+  color: green;
+  display: block;
+}
+
+#confirmMatchMsg.invalid {
+  color: red;
+  display: block;
+}
+
+.toggle-password {
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 35px;
+}
+.field {
+  position: relative;
+}
+
+

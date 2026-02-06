@@ -38,32 +38,23 @@ async function fetchSettings() {
 
     const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to load settings");
-    }
+    if (!res.ok) throw new Error(data.message || "Failed to load settings");
 
-    // Profile fields
-    const firstNameEl = getEl("firstName");
-    const lastNameEl = getEl("lastName");
-    const emailEl = getEl("email");
-
-    if (firstNameEl) firstNameEl.value = data.f_name || "";
-    if (lastNameEl) lastNameEl.value = data.l_name || "";
-    if (emailEl) emailEl.value = data.email || "";
+    // Profile
+    getEl("firstName").value = data.f_name || "";
+    getEl("lastName").value = data.l_name || "";
+    getEl("email").value = data.email || "";
 
     // Preferences
     const darkModeEl = getEl("darkModeToggle");
     const emailNotifEl = getEl("emailNotifications");
 
-    const darkMode = darkModeEl.checked = data.mode || false;
-    const emailNotifications = !!data.preferences?.emailNotifications;
-
     if (darkModeEl) {
-      darkModeEl.checked = darkMode;
-      document.body.classList.toggle("dark-mode", darkMode);
+      darkModeEl.checked = data.mode || false;
+      document.body.classList.toggle("dark-mode", darkModeEl.checked);
     }
 
-    if (emailNotifEl) emailNotifEl.checked = emailNotifications;
+    if (emailNotifEl) emailNotifEl.checked = !!data.preferences?.emailNotifications;
 
   } catch (err) {
     showError(err, "Unable to load settings");
@@ -74,36 +65,23 @@ async function fetchSettings() {
 // Update Profile
 // =========================
 async function updateProfile() {
-  const firstNameEl = getEl("firstName");
-  const lastNameEl = getEl("lastName");
-  const emailEl = getEl("email");
-
-  if (!firstNameEl || !lastNameEl || !emailEl) {
-    return showError({ message: "Profile form is missing elements" });
-  }
-
-  const f_name = firstNameEl.value.trim();
-  const l_name = lastNameEl.value.trim();
-  const email = emailEl.value.trim();
+  const f_name = getEl("firstName").value.trim();
+  const l_name = getEl("lastName").value.trim();
+  const email = getEl("email").value.trim();
 
   if (!f_name || !l_name || !email) {
     return showError({ message: "All profile fields are required" });
   }
 
-  const payload = { f_name, l_name, email };
-
   try {
     const res = await fetch("/api/users/profile", {
       method: "PUT",
       headers: authHeaders(),
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ f_name, l_name, email })
     });
 
     const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      throw new Error(data.message || `Failed with status ${res.status}`);
-    }
+    if (!res.ok) throw new Error(data.message || `Failed with status ${res.status}`);
 
     alert("Profile updated successfully");
   } catch (err) {
@@ -112,23 +90,49 @@ async function updateProfile() {
 }
 
 // =========================
+// Password Validation
+// =========================
+const passwordRules = {
+  length: /(?=.{8,})/,
+  upper: /[A-Z]/,
+  lower: /[a-z]/,
+  number: /\d/,
+  special: /[^A-Za-z0-9]/
+};
+
+function validatePassword(password) {
+  const results = {
+    length: passwordRules.length.test(password),
+    upper: passwordRules.upper.test(password),
+    lower: passwordRules.lower.test(password),
+    number: passwordRules.number.test(password),
+    special: passwordRules.special.test(password)
+  };
+
+  Object.keys(results).forEach(key => {
+    const el = getEl(`req-${key}`);
+    if (el) el.style.color = results[key] ? "green" : "red";
+  });
+
+  return Object.values(results).every(Boolean);
+}
+
+
+
+// =========================
 // Change Password
 // =========================
 async function changePassword() {
-  const currentEl = getEl("currentPassword");
-  const newEl = getEl("newPassword");
-  const confirmEl = getEl("confirmPassword");
-
-  if (!currentEl || !newEl || !confirmEl) {
-    return alert("Password form is missing elements");
-  }
-
-  const currentPassword = currentEl.value;
-  const newPassword = newEl.value;
-  const confirmPassword = confirmEl.value;
+  const currentPassword = getEl("currentPassword").value;
+  const newPassword = getEl("newPassword").value;
+  const confirmPassword = getEl("confirmPassword").value;
 
   if (!currentPassword || !newPassword || !confirmPassword) {
     return alert("Please fill all password fields");
+  }
+
+  if (!validatePassword(newPassword)) {
+    return alert("New password does not meet all requirements");
   }
 
   if (newPassword !== confirmPassword) {
@@ -142,14 +146,16 @@ async function changePassword() {
       body: JSON.stringify({ currentPassword, newPassword })
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to change password");
 
     alert("Password changed successfully");
 
-    currentEl.value = "";
-    newEl.value = "";
-    confirmEl.value = "";
+    // Reset fields
+    getEl("currentPassword").value = "";
+    getEl("newPassword").value = "";
+    getEl("confirmPassword").value = "";
+    getEl("passwordRules").style.display = "none";
   } catch (err) {
     showError(err, "Failed to change password");
   }
@@ -159,27 +165,18 @@ async function changePassword() {
 // Save Preferences
 // =========================
 async function savePreferences() {
-  const darkModeEl = getEl("darkModeToggle");
-  const emailNotifEl = getEl("emailNotifications");
-
-  if (!darkModeEl || !emailNotifEl) {
-    return alert("Preferences form is missing elements");
-  }
+  const darkMode = getEl("darkModeToggle").checked;
+  const emailNotifications = getEl("emailNotifications").checked;
 
   try {
-    const payload = {
-      darkMode: darkModeEl.checked,
-      emailNotifications: emailNotifEl.checked
-    };
-
     const res = await fetch("/api/users/preferences", {
       method: "PUT",
       headers: authHeaders(),
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ darkMode, emailNotifications })
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to save preferences");
 
     alert("Preferences saved successfully");
   } catch (err) {
@@ -191,17 +188,31 @@ async function savePreferences() {
 // Setup Settings Page
 // =========================
 function setupSettingsPage() {
-  // Call the real fetch function
   fetchSettings();
 
   getEl("updateProfileBtn")?.addEventListener("click", updateProfile);
   getEl("changePasswordBtn")?.addEventListener("click", changePassword);
   getEl("savePreferencesBtn")?.addEventListener("click", savePreferences);
 
+  // Toggle dark mode visually
   getEl("darkModeToggle")?.addEventListener("change", (e) => {
     document.body.classList.toggle("dark-mode", e.target.checked);
   });
+
+  // Show/hide password toggles
+  document.querySelectorAll(".toggle-password").forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      const targetId = toggle.getAttribute("data-target");
+      const input = getEl(targetId);
+      if (input.type === "password") {
+        input.type = "text";
+        toggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      } else {
+        input.type = "password";
+        toggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
+      }
+    });
+  });
 }
 
-// Expose globally for dashboard.js
 window.loadSettings = setupSettingsPage;

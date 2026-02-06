@@ -1,9 +1,7 @@
 <!-- TOP BAR -->
 <div class="top-bar">
   <h2>Recipe Details</h2>
-  <a class="add-recipe" href="/dashboard.html" id="backBtn">
-    < Back to Recipes
-  </a>
+  <a class="add-recipe" href="/dashboard.html" id="backBtn">&lt; Back to Recipes</a>
 </div>
 
 <!-- Page Inner Wrapper -->
@@ -19,32 +17,41 @@
         <!-- Recipe Name -->
         <div class="field">
           <label for="title">Recipe Name</label>
-          <input class="readonly-field" id="title" value="---" readonly>
+          <!-- <input class="readonly-field recipe-title" id="title" readonly> -->
+          <span id="title" class="readonly-field recipe-title"></span>
         </div>
 
         <!-- Category -->
         <div class="field">
           <label for="category">Category</label>
-          <input id="category" value="Uncategorized" readonly>
+          <div>
+            <span id="category" class="badge category-badge"></span>
+          </div>
         </div>
 
-        <!-- Likes / Dislikes -->
+        <!-- Difficulty -->
         <div class="field">
-          <label>Interest</label>
-          <div class="likes-wrapper">
+          <label>Difficulty</label>
+          <div>
+            <span id="difficultyPill" class="badge difficulty-badge"></span>
+          </div>
+        </div>
 
-            <!-- Like button -->
-            <button class="like-btn" id="likeBtn" type="button">
-              <i class="fa-regular fa-thumbs-up"></i>
-              <span id="likeCount">0</span>
-            </button>
+        <!-- Ingredients -->
+        <div class="field">
+          <label>Ingredients</label>
+          <ul id="ingredientsList"></ul>
+        </div>
 
-            <!-- Dislike button -->
-            <button class="dislike-btn" id="dislikeBtn" type="button">
-              <i class="fa-regular fa-thumbs-down"></i>
-              <span id="dislikeCount">0</span>
-            </button>
-
+        <!-- Ratings -->
+        <div class="field">
+          <label>Rating</label>
+          <div class="stars" id="ratingStars">
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+            <i class="fa-regular fa-star"></i>
           </div>
         </div>
 
@@ -52,23 +59,45 @@
         <div class="field field-full">
           <label>Recipe Image</label>
           <div class="image-preview" id="imagePreview">
-            <img id="previewImg" alt="Recipe preview" src="" />
-            <span class="image-placeholder"></span>
+            <img id="previewImg" alt="Recipe preview" src="images/placeholder.png" />
+            <span class="image-placeholder">No image uploaded</span>
           </div>
         </div>
 
         <!-- Recipe Details -->
         <div class="field field-full">
           <label for="wishText">Recipe Details</label>
-          <textarea id="wishText" rows="6" readonly>---</textarea>
+          <textarea id="wishText" rows="6" readonly></textarea>
         </div>
 
+        <hr class="divider" />
+
         <!-- Favourites -->
-        <div class="field field-full fav-field">
+        <!-- <div class="field field-full fav-field">
           <label>
-            <input type="checkbox" id="favourite" disabled>
+            <input type="checkbox" id="favourite">
             Save to favourites
           </label>
+        </div> -->
+        <!-- Favourites -->
+        <div class="field field-full fav-field">
+          <span id="favouriteHeart" class="fa-regular fa-heart" style="cursor:pointer; font-size: 24px; color: #ccc; transition: transform 0.2s;"></span>
+          Save to favourites
+        </div>
+
+        <!-- Likes / Dislikes -->
+        <div class="field">
+          <label>Interest</label>
+          <div class="likes-wrapper">
+            <button class="like-btn" id="likeBtn" type="button">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span id="likeCount">0</span>
+            </button>
+            <button class="dislike-btn" id="dislikeBtn" type="button">
+              <i class="fa-regular fa-thumbs-down"></i>
+              <span id="dislikeCount">0</span>
+            </button>
+          </div>
         </div>
 
       </form>
@@ -78,27 +107,27 @@
     <aside class="recipe-meta-wrapper">
 
       <!-- Prep / Cook / Serves -->
-      <div class="recipe-meta">
+      <div class="recipe-meta fade-slide">
         <div class="meta-item">
           <span class="meta-label">Prep</span>
-          <span class="meta-value" id="prepTime"></span>
+          <span class="meta-value" id="prepTime">-</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Cook</span>
-          <span class="meta-value" id="cookTime"></span>
+          <span class="meta-value" id="cookTime">-</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Serves</span>
-          <span class="meta-value" id="servesCount"></span>
+          <span class="meta-value" id="servesCount">-</span>
         </div>
       </div>
 
       <!-- Author -->
-      <div class="recipe-author">
+      <div class="recipe-author fade-slide">
         <img src="images/chef.png" alt="Recipe Author" id="authorAvatar">
         <div>         
-          <p class="author-role" id="authorRole">By </p>
-          <p class="author-name" id="authorName" aria-placeholder="N/A"></p>
+          <p class="author-role" id="authorRole">By</p>
+          <p class="author-name" id="authorName">N/A</p>
         </div>
       </div>
 
@@ -106,10 +135,11 @@
 
   </div>
 
+  <!-- Comments Section -->
   <section class="comments-section">
-  <h3>Comments</h3>
+    <h3>Comments</h3>
 
-  <!-- Comments container -->
+    <!-- Comments container -->
     <div class="comments-list" id="commentsList">
       <!-- Comments will be dynamically inserted here -->
     </div>
@@ -121,10 +151,9 @@
         <textarea id="commentInput" placeholder="Write your comment..." rows="2" required></textarea>
       </div>
       <div class="actions-bar">
-        <button type="submit" class="btn btn-primary">Post Comment</button>
+        <button type="submit" class="btn-primary">Post Comment</button>
       </div>
     </form>
   </section>
-
 
 </div>
