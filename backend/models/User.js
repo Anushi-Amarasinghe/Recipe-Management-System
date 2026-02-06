@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
   favourites: [{
   type: mongoose.Schema.Types.ObjectId,
   ref: "Recipe"
-}]
+}],
   deletedAt: {
     type: Date,
     default: null
